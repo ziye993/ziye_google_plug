@@ -1,0 +1,11 @@
+.Layout>header {
+  background: transparent !important;
+}
+
+.Layout {
+  max-inline-size: 700px;
+}
+
+.Layout :global(.ant-layout-header) {
+  padding-left: 10px !important;
+}

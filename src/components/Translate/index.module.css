@@ -1,0 +1,80 @@
+.tsl_container {
+  display: flex;
+  flex-direction: column;
+  max-block-size: 300px;
+  overflow: auto;
+}
+
+.tsl_container::-webkit-scrollbar {
+  display: none;
+}
+
+:blobal(.ant-space, .ant-form) {
+  line-height: 32px !important;
+  padding: 0;
+  margin: 0 !important;
+  block-size: 32px;
+}
+
+.appid_setting_icon {
+  inline-size: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: nowrap;
+  align-content: center;
+
+}
+
+.appid_setting_icon span {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 32px;
+  block-size: 32px;
+}
+
+.setting_span {
+  margin-inline-end: 100px;
+  transition: all 0.3s;
+}
+
+.settingcontent {
+  transition: all 0.3s;
+}
+
+.appid_setting_icon:hover .settingcontent,
+.appid_setting_icon:hover .setting_span {
+
+  transform: translateX(-300px);
+}
+
+
+.res_box {
+  max-inline-size: 121px;
+  transition: all 0.3s;
+  inline-size: auto;
+  block-size: auto;
+  padding: 3px;
+  border-radius: 10px;
+  /* min-block-size: ; */
+}
+
+.res_box span {
+  white-space: nowrap;
+}
+
+.res_box :global(.ant-form-item) {
+  margin: 0;
+  padding: 0;
+}
+
+.res_box:hover {
+  background-color: #FFFFFF;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  transform: translateY(-4px);
+}
+
+.tranl_res_span {
+  cursor: pointer;
+  color: #1677ff;
+  transition: all 0.3s;
+}

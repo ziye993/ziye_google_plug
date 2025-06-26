@@ -1,0 +1,22 @@
+.agentBar {
+  width: 100%;
+  height: 100%;
+}
+
+.agentHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  line-height: 30px;
+}
+
+.agentBar :global(.ant-space) {
+  block-size: 32px;
+  line-height: 32px;
+  padding-block-end: 10px;
+}
+
+.agentBar :global(.ant-space-item) {
+  block-size: 32px;
+}

@@ -1,0 +1,38 @@
+.name {
+  margin-inline-end: 10px;
+}
+
+.layout_header {
+  /* background-color: red; */
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  line-height: 32px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.vision_and_switch {
+  max-inline-size: 100px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+
+
+.vision_and_switch_content {
+  font-size: 14px;
+  inline-size: 400px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  inline-size: 300px;
+  transform: translateX(-220px);
+  transition: all 0.8s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.vision_and_switch_content:hover {
+  transform: translateX(5px);
+}
+
