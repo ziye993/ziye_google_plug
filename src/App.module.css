@@ -4,6 +4,8 @@
 
 .Layout {
   max-inline-size: 700px;
+  min-height: 400px;
+  max-height: 500px;
 }
 
 .Layout :global(.ant-layout-header) {

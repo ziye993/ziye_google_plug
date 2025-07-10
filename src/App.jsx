@@ -14,7 +14,6 @@ function App() {
       <LayoutContent />
     </Content>
     <Footer>
-
     </Footer>
   </Layout>)
 }

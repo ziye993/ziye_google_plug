@@ -4,12 +4,13 @@ import styles from './index.module.css'
 import { Switch, Tabs } from 'antd';
 import Translate from '../../components/Translate';
 import AgentBar from '../../components/AgentBar';
+import QrCodeTranslate from '../../components/QrCodeTranslate';
 
 const items = [
   { label: '翻译', key: 'translate', children: <Translate /> },
   { label: '代理', key: 'proxy', children: <AgentBar /> },
   { label: '搜索精简', key: 'searchSimplify', children: <>搜索精简</> },
-  { label: '二维码转换', key: 'tool', children: <>二维码转换</> },
+  { label: '二维码转换', key: 'tool', children: <QrCodeTranslate /> },
   { label: '主题', key: 'theme', children: <>主题</> },
   { label: '中间脚本', key: 'therJobo', children: <>中间脚本</> },
 

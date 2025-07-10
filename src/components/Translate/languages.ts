@@ -29,3 +29,6 @@ export const languages: { name: string, code: string }[] = [
   { name: "繁体中文", code: "cht" },
   { name: "越南语", code: "vie" }
 ];
+
+const _languages = languages.reduce((prev, _) => ({ ...prev, [_.code]: _.name }), {});
+export const languagesReduc = _languages;

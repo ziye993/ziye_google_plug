@@ -1,6 +1,6 @@
 // import { getTranlateData } from 'lib/service';
 // import React, { useEffect, useState } from 'react';
-import { languages } from './languages';
+import { languages, languagesReduc } from './languages';
 // import { copyText } from 'lib/utils';
 import styles from './index.module.css';
 import { Checkbox, Form, Input, Select, Space } from 'antd';
@@ -8,6 +8,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { copyText, getStorage, setStorage } from '../../lib';
 import { getTranlateData } from '../../lib/tranlApi';
+import { useForm } from 'antd/es/form/Form';
 
 
 const languagesOptions = languages.map(lang => ({
@@ -17,89 +18,90 @@ const languagesOptions = languages.map(lang => ({
 
 const CanCoptTranlResSpan = ({ list = [] }) => {
   if (!list || !list.length) return null;
-  return <>{list.map(_ => <p className={styles.tranl_res_span} onClick={() => { copyText }}>{_.span}</p>)}</>
+  return <>{list.map(_ => <p className={styles.tranl_res_span} onClick={() => { copyText(_) }}>{_}</p>)}</>
 }
 
+const uniRegest = /\s+/g;
+const humpRegest = /\s+([a-z])/gi;
+
 export default function Translate() {
-  const [formData, setFormData] = useState({
-    currentLanguage: 'zh-CN',
-    targetLanguage: 'en',
-    appid: '',
-    appkey: '',
-    showUnderline: false,
-    showHump: false,
-    showSubtraction: false,
-  });
+  // const [formData, setFormData] = useState({
+  //   currentLanguage: 'zh',
+  //   targetLanguage: 'en',
+  //   appid: '',
+  //   appkey: '',
+  //   showUnderline: false,
+  //   showHump: false,
+  //   showSubtraction: false,
+  // });
   const [componentsDate, setComponentsData] = useState({
     showSetting: false,
-    tranlRes: [],
+    tranlRes: {},
+    formData: {},
   })
+  const [loading, setLoading] = useState(false)
+  const [form] = useForm();
+
   useEffect(() => {
     async function fetchData() {
       const storageData = await getStorage("tranlPageData");
-      console.log(storageData, 'storageData')
       if (storageData) {
-        setComponentsData(storageData.componentsDate)
-        setFormData(storageData.formData);
+        const objData = typeof storageData === 'string' ? JSON.parse(storageData) : storageData
+        setComponentsData(objData?.componentsDate)
+        form.setFieldsValue(objData.formData)
       }
     }
     fetchData();
   }, []);
 
-
-
-  const handleTranslate = async () => {
-    const { currentLanguage, targetLanguage, translateContent, appid = '20231109001875285', appkey = 'PQVEEvqcU1pdwNAylh3X' } = formData;
-    if (!appid || !appkey) {
-      return;
+  const handleTranslate = async (e) => {
+    if (!(e.keyCode === 13 && e.ctrlKey)) {
+      return
     }
+    if (loading) return
+    setLoading(true);
+    const formData = form.getFieldsValue(true);
+    let { currentLanguage, targetLanguage, translateContent, appid = '20231109001875285', appkey = 'PQVEEvqcU1pdwNAylh3X' } = formData;
+    if (!appid || !appkey) {
+      appid = '20231109001875285';
+      appkey = 'PQVEEvqcU1pdwNAylh3X';
+    }
+    translateContent = translateContent || e.target.value;
+    const tData = await getTranlateData(translateContent, currentLanguage, targetLanguage, appid, appkey);// 目标
+    let zhData, enData;
+    zhData = tData?.from !== 'zh' ? await getTranlateData(translateContent, currentLanguage, "zh", appid, appkey) : null;//中
+    enData = tData?.from !== 'en' ? await getTranlateData(translateContent, currentLanguage, "en", appid, appkey) : null;//英
 
-
-    const tData = await getTranlateData(translateContent, currentLanguage, targetLanguage, formData.appid, formData.key);// 目标
-    const zhData = formData.targetStrType !== 'zh' ? await getTranlateData(translateContent, currentLanguage, "zh", formData.appid, formData.key) : null;//中
-    const enData = formData.targetStrType !== 'en' ? await getTranlateData(translateContent, currentLanguage, "en", formData.appid, formData.key) : null;//英
+    console.log(tData, enData, zhData, 'resData')
     const resData = {
-      tData,
-      enData,
-      zhData,
+      tData: tData?.list || [],
+      enData: enData?.list || [],
+      zhData: zhData?.list || [],
       error: null,
+      from: tData.from,
     }
 
     if (tData) {
       setComponentsData((prev) => {
         setStorage("tranlPageData", JSON.stringify({
           formData,
-          componentsDate,
+          componentsDate: { ...prev, tranlRes: resData },
         }));
         return { ...prev, tranlRes: resData }
       });
-      return
     }
-    setFormData(v => ({ ...v, res: { error: '请求失败' } }));
-
-
-    // 调用翻译接口
-    // const res = await getTranlateData({
-    //   from: currentLanguage,
-    //   to: targetLanguage,
-    //   q: translateContent,
-    //   appid,
-    //   appkey,
-    // });
+    setLoading(false);
   }
 
 
   return (<div className={styles.tsl_container}>
     <Form
-      onValuesChange={(changedValues) => {
-        console.log(changedValues)
-        setFormData(prev => ({
-          ...prev,
-          ...changedValues,
-        }));
+      form={form}
+      onValuesChange={(_, values) => {
+        setComponentsData(prev => ({ ...prev, formData: values }))
       }}
-      initialValues={formData}
       layout='vertical'
+      disabled={loading}
     >
       <Space align="baseline">
         将
@@ -144,57 +146,58 @@ export default function Translate() {
           </Space>
         </div>
       </Space >
-      <Form.Item name="translateContent">
+      <Form.Item name="translateContent" style={{ position: 'relative' }}>
         <Input.TextArea
           placeholder='请输入需要翻译的内容'
           autoSize={{ minRows: 3, maxRows: 6 }}
           style={{ inlineSize: '100%', maxBlockSize: '150px' }}
-
-          onInput={(e) => {
-            // 如果输入回车
-            if (e.nativeEvent.inputType === 'insertLineBreak') {
-              // 这里可以调用翻译接口
-              handleTranslate()
-            }
-          }}
+          onKeyDown={handleTranslate}
         />
+        <span className={styles.current_language}> 当前可能是:{languagesReduc?.[componentsDate?.tranlRes?.from]}</span>
       </Form.Item>
-      <Space align="baseline">
+      <Space align="start" className={styles.ret_space}>
         <div className={styles.res_box}>
           <p>目标语言</p>
-          <CanCoptTranlResSpan list={componentsDate.tranlRes} />
+          <CanCoptTranlResSpan list={componentsDate?.tranlRes?.tData} />
         </div>
         <div className={styles.res_box}>
           <p>中</p>
-          <CanCoptTranlResSpan list={componentsDate.tranlRes} />
+          <CanCoptTranlResSpan list={componentsDate?.tranlRes?.zhData} />
         </div>
         <div className={styles.res_box}>
           <p>英</p>
-          <CanCoptTranlResSpan list={componentsDate.tranlRes} />
+          <CanCoptTranlResSpan list={componentsDate?.tranlRes?.enData} />
         </div>
-        <div className={styles.res_box}>
+
+        {componentsDate?.formData?.showUnderline && (<div className={styles.res_box}>
           <Form.Item name='showUnderline' valuePropName="checked" noStyle>
             <Checkbox>使用`_`连接</Checkbox>
           </Form.Item>
-          {formData.showUnderline && (
-            <CanCoptTranlResSpan list={componentsDate.tranlRes} />
-          )}
-        </div>
-        <div className={styles.res_box}>
+          <CanCoptTranlResSpan list={componentsDate?.tranlRes?.enData?.map(_ => _.replace(/[^a-zA-Z\s\u4e00-\u9fa5]/g, "").toLowerCase().replace(uniRegest, "_"))} />
+        </div>)}
+        {componentsDate?.formData?.showSubtraction && (<div className={styles.res_box}>
           <Form.Item name='showSubtraction' valuePropName="checked" noStyle>
             <Checkbox>使用`-`连接</Checkbox>
           </Form.Item>
-          {formData.showSubtraction && (
-            <CanCoptTranlResSpan list={componentsDate.tranlRes} />
-          )}
-        </div>
-        <div className={styles.res_box}>
+          <CanCoptTranlResSpan list={componentsDate?.tranlRes?.enData?.map(_ => _.replace(/[^a-zA-Z\s\u4e00-\u9fa5]/g, "").toLowerCase().replace(uniRegest, "-"))} />
+        </div>)}
+        {componentsDate?.formData?.showHump && (<div className={styles.res_box}>
           <Form.Item name='showHump' valuePropName="checked" noStyle>
             <Checkbox>使用驼峰连接</Checkbox>
           </Form.Item>
-          {formData.showHump && (
-            <CanCoptTranlResSpan list={componentsDate.tranlRes} />
-          )}
+          <CanCoptTranlResSpan list={componentsDate?.tranlRes?.enData?.map(_ => _.replace(/[^a-zA-Z\s\u4e00-\u9fa5]/g, "").toLowerCase().replace(humpRegest, (_, c) => c.toUpperCase()))} />
+        </div>)}
+
+        <div className={styles.res_box}>
+          {!componentsDate?.formData?.showUnderline && <Form.Item name='showUnderline' valuePropName="checked" noStyle>
+            <Checkbox>使用`_`连接</Checkbox>
+          </Form.Item>}
+          {!componentsDate?.formData?.showSubtraction && <Form.Item name='showSubtraction' valuePropName="checked" noStyle>
+            <Checkbox>使用`-`连接</Checkbox>
+          </Form.Item>}
+          {!componentsDate?.formData?.showHump && <Form.Item name='showHump' valuePropName="checked" noStyle>
+            <Checkbox>使用驼峰连接</Checkbox>
+          </Form.Item>}
         </div>
       </Space>
     </Form >

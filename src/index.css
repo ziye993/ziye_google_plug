@@ -1,6 +1,5 @@
 html {
   width: 700px;
-  height: 500px;
   margin: 0;
   padding: 0;
 }
@@ -60,7 +59,5 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  inset-inline-start: 0;
-  inset-block-start: 0;
   line-height: unset;
 }

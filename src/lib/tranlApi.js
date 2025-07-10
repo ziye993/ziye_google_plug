@@ -1,15 +1,19 @@
 
 import md5 from "js-md5";
-import { jsonp } from "./baseApi";
+// import { jsonp } from "./baseApi";
 
-async function fanyiBodyFetch(api, param) {
-  let res = null;
-  try {
-    res = await jsonp(param);
-  } catch (error) {
-    console.error(error)
-  }
-  return res;
+async function fanyiBodyFetch(params) {
+  const url = new URL('https://api.fanyi.baidu.com/api/trans/vip/translate');
+  url.search = new URLSearchParams(params).toString();
+  return new Promise((res) => {
+    fetch(url)
+      .then(response => response.json())
+      .then((data) => res({ ...data, list: data.trans_result.map(_ => _.dst) }))
+      .catch((error) => {
+        console.log(error)
+        res({ list: [] })
+      });
+  })
 }
 
 
@@ -19,23 +23,25 @@ function getSign(text) {
 }
 
 
-export const getTranlateData = async (data, form, to, userAppid, userKey) => {
+export const getTranlateData = async (data, from, to, userAppid, userKey) => {
+  console.log(data, from, to, 'qft')
   // const encoder = new TextEncoder();
   const appid = userAppid || '20231109001875285';
-  const q = data;
   const salt = Number(Math.random().toString().split('.')[1]);
   const key = userKey || 'PQVEEvqcU1pdwNAylh3X';
-  const str = `${appid}${q}${salt}${key}`;
+  const str = `${appid}${data}${salt}${key}`;
   const sign = getSign(str);
   const param = {
-    q: q,
+    q: data,
     // q: encoder.encode(q),
-    from: form,
+    from,
     to,
     appid,
     salt,
     sign
   }
-  const tranlateData = await fanyiBodyFetch(`translate`, param);
-  return tranlateData?.trans_result;
+
+  const tranlateData = await fanyiBodyFetch(param);
+
+  return tranlateData;
 }

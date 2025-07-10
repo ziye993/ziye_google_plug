@@ -34,6 +34,7 @@ export function getStorage(id) {
   }
   return new Promise((resolve) => {
     chrome.storage.local.get(id, (result) => {
+      console.log(result)
       resolve(result[id]);
     });
   });

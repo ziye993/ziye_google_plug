@@ -23,5 +23,6 @@ function manifestPlugin() {
 }
 
 export default defineConfig({
-  plugins: [react(), manifestPlugin()]
+  plugins: [react(), manifestPlugin()],
+  base: './',  // 设置为相对路径
 });
