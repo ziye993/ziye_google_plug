@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-
+import { openDB as idbOpenDB } from 'idb';
 // 设置数据：传入 key 和 data 对象
 export function setStorage(id, data) {
   if (chrome?.storage?.local === undefined && localStorage) {
@@ -38,4 +38,21 @@ export function getStorage(id) {
       resolve(result[id]);
     });
   });
+}
+
+
+export async function openDB() {
+  return idbOpenDB('ThemeImages', 1, {
+    upgrade(db) {
+      if (!db.objectStoreNames.contains('images')) {
+        db.createObjectStore('images');
+      }
+    },
+  });
+}
+
+export async function getImageBlobById(id) {
+  const db = await openDB();
+  const tx = db.transaction('images', 'readonly');
+  return tx.objectStore('images').get(id);
 }

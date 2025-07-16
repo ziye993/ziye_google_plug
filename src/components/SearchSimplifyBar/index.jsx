@@ -2,26 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { CloseOutlined, CopyOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import './index.css'
 import { Checkbox, Input, message, Switch } from 'antd';
-import { isURLorIP } from 'lib/utils';
-import { AccordingToLimitCheckBox } from 'components/AccordingToLimitCheckBox';
+import { setStorage } from '../../lib/storege';
+import { isURLorIP } from '../../lib/url';
+import { AccordingToLimitCheckBox } from '../AccordingToLimitCheckBox';
 
-interface IData {
-  open: boolean,
-  allChecked: boolean,
-  defaultSeachTool: {
-    title: string,
-    url: string,
-    isDefault: boolean,
-    config: string[],
-    hidden?: boolean,
-    boxName: string[],
-    edit?: boolean,
-    checked?: boolean,
-  }[]
-};
-type IAnyObj = {
-  [key: string]: any
-}
+
+
 let defaultData = {
   open: true,
   allChecked: false,
@@ -69,9 +55,9 @@ if (storageConfigData) {
 
 }
 
-const BoxName = (props: any) => {
+const BoxName = (props) => {
   const [isEdit, setIsEdit] = useState(false);
-  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const inputRef = React.useRef(null);
   useEffect(() => {
     if (isEdit) {
       inputRef.current?.focus();
@@ -84,7 +70,7 @@ const BoxName = (props: any) => {
     // inputRef.current?.focus();
     return false;
   }}>
-    {!isEdit && props.titles.map((item: string, index: number) => {
+    {!isEdit && props.titles.map((item, index) => {
       return <span className='classSpanName' key={`classSpanName_${index}`}>
         {item}
       </span>
@@ -95,7 +81,7 @@ const BoxName = (props: any) => {
       defaultValue={props.titles.join('/')}
       ref={inputRef}
       onChange={() => { }}
-      onKeyDown={(e: any) => {
+      onKeyDown={(e) => {
         if (e.keyCode === 13) {
           props.onChange(e.target.value);
           setIsEdit(false)
@@ -108,21 +94,21 @@ const BoxName = (props: any) => {
   </span>
 }
 
-const SearchSimplifyBar: React.FC = function () {
-  const [data, sd] = useState<IData>(defaultData);
-  const [actionItem, setActionItem] = useState<number | null>(null)
+const SearchSimplifyBar = function () {
+  const [data, sd] = useState(defaultData);
+  const [actionItem, setActionItem] = useState(null)
   const [formData, setFormatData] = useState({ name: '', url: '' });
 
-  const setData = (data: IAnyObj | Function) => {
+  const setData = (data) => {
     if (typeof data === 'function') {
-      const newData = data((v: any) => ({ ...v, ...data(v) }))
+      const newData = data((v) => ({ ...v, ...data(v) }))
       sd(v => ({ ...v, ...newData }))
       return
     }
     sd(v => ({ ...v, ...data }))
   }
 
-  const updataFormData = (data: IAnyObj | null) => {
+  const updataFormData = (data) => {
     if (data === null) {
       setFormatData({
         name: '',
@@ -133,7 +119,7 @@ const SearchSimplifyBar: React.FC = function () {
     setFormatData(v => ({ ...v, ...data }))
   }
 
-  const clearItem = (index: number) => {
+  const clearItem = (index) => {
     const newData = data.defaultSeachTool;
     newData.splice(index, 1);
     setData({
@@ -142,16 +128,16 @@ const SearchSimplifyBar: React.FC = function () {
     save()
   }
 
-  const setAction = (index: number) => {
+  const setAction = (index) => {
     // if (!data.defaultSeachTool[index].config.length) return;
     setActionItem(prve => prve === index ? null : index);
   }
 
-  const addkeyWord = (e: any) => {
+  const addkeyWord = (e) => {
     // e.preventDefault();
     if (e.keyCode === 13) {
       const newData = data.defaultSeachTool;
-      newData[actionItem!].config.push(e.target.value);
+      newData[actionItem].config.push(e.target.value);
       setData({
         defaultSeachTool: newData
       });
@@ -186,9 +172,9 @@ const SearchSimplifyBar: React.FC = function () {
     save();
   }
 
-  const deleteKeyWord = (cngi: number) => {
+  const deleteKeyWord = (cngi) => {
     const newData = data.defaultSeachTool;
-    newData[actionItem!].config.splice(cngi, 1);
+    newData[actionItem].config.splice(cngi, 1);
     setData({
       defaultSeachTool: newData
     })
@@ -196,14 +182,10 @@ const SearchSimplifyBar: React.FC = function () {
 
   function save() {
     localStorage.setItem('defaultSeachTool', JSON.stringify(data));
-    const storage = chrome?.storage?.local;
-    if (storage) {
-      
-      storage.set({ defaultSeachTool: JSON.stringify(data) })
-    }
+    setStorage('defaultSeachTool', JSON.stringify(data))
   }
 
-  const classChange = (value: string, index: number) => {
+  const classChange = (value, index) => {
     const newData = data.defaultSeachTool;
     newData[index].boxName = value.split('/');
     setData({
@@ -211,7 +193,7 @@ const SearchSimplifyBar: React.FC = function () {
     });
   }
 
-  const copyItem = (i: number) => {
+  const copyItem = (i) => {
     const newData = data.defaultSeachTool;
     const v = newData[i];
     newData.push(v);
@@ -221,7 +203,7 @@ const SearchSimplifyBar: React.FC = function () {
 
   }
 
-  const editItem = (i: number) => {
+  const editItem = (i) => {
     const newData = data.defaultSeachTool;
     newData[i].edit = true;
     setData({
@@ -229,7 +211,7 @@ const SearchSimplifyBar: React.FC = function () {
     });
   }
 
-  const saveItem = (e: any, i: number) => {
+  const saveItem = (e, i) => {
     if (e.keyCode === 13) {
       const newData = data.defaultSeachTool;
       newData[i].edit = false;
@@ -240,7 +222,7 @@ const SearchSimplifyBar: React.FC = function () {
 
   }
 
-  const urlItemChange = (e: any, index: number) => {
+  const urlItemChange = (e, index) => {
     const newData = data.defaultSeachTool;
     newData[index].url = e.target.value;
     if (e.keyCode === 13) {
@@ -252,7 +234,7 @@ const SearchSimplifyBar: React.FC = function () {
 
   }
 
-  const nameItemChange = (e: any, index: number) => {
+  const nameItemChange = (e, index) => {
     console.log(e)
     const newData = data.defaultSeachTool;
     newData[index].title = e.target.value;
@@ -264,7 +246,7 @@ const SearchSimplifyBar: React.FC = function () {
     });
   }
 
-  const checkChange = (index: number, e: any) => {
+  const checkChange = (index, e) => {
     e.stopPropagation();
     // e.preventDefault()
     const newData = data.defaultSeachTool;
@@ -274,7 +256,7 @@ const SearchSimplifyBar: React.FC = function () {
     })
   }
 
-  const changeAll = (e: any) => {
+  const changeAll = (e) => {
 
     const newData = data.defaultSeachTool;
     newData.forEach(item => {
@@ -291,7 +273,7 @@ const SearchSimplifyBar: React.FC = function () {
 
   }, [data]);
 
-  const AccordingToLimitCheckBoxValue = data.defaultSeachTool.reduce((pre, item) => {
+  const AccordingToLimitCheckBoxValue = data?.defaultSeachTool?.reduce?.((pre, item) => {
     if (item.checked) {
       return pre + 1;
     } else {
@@ -305,15 +287,15 @@ const SearchSimplifyBar: React.FC = function () {
         <AccordingToLimitCheckBox
           onChange={changeAll}
           value={AccordingToLimitCheckBoxValue}
-          max={data.defaultSeachTool.length}
+          max={data?.defaultSeachTool?.length}
           min={0} />
       </div>
       <div>
         开启筛选：
-        <Switch checked={data.open} onChange={(value) => { setData((d: any) => ({ ...d, open: value })) }} />
+        <Switch checked={data.open} onChange={(value) => { setData((d) => ({ ...d, open: value })) }} />
       </div>
     </div>
-    {data.defaultSeachTool.map((item, index) => {
+    {data?.defaultSeachTool?.map((item, index) => {
       if (item?.hidden && !item.url) {
         return <React.Fragment key={'url' + index} />
       }
@@ -339,7 +321,7 @@ const SearchSimplifyBar: React.FC = function () {
 
           <span> 目标元素：</span> <BoxName
             titles={item?.boxName}
-            onChange={(value: string) => classChange(value, index)} />
+            onChange={(value) => classChange(value, index)} />
         </div>
         <CopyOutlined className='copyIcon' onClick={() => copyItem(index)} />
         <EditOutlined className='editIcon' onClick={() => editItem(index)} />

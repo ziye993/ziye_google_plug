@@ -3,6 +3,10 @@
   height: 100%;
 }
 
+.agentBar :global(.ant-modal-wrap)::-webkit-scrollbar {
+  display: none;
+}
+
 .agentHead {
   display: flex;
   align-items: center;
@@ -41,8 +45,11 @@
 }
 
 .AddRuleModalForm {
-  max-height: 300px;
+  height: 100vh;
+  width: 100vw;
+  max-height: 100vh;
   overflow: auto;
+
 }
 
 .AddRuleModalForm::-webkit-scrollbar {
@@ -114,4 +121,10 @@
 
 .formItemLabel {
   font-size: 12px;
+}
+
+.agentBar :global(.ant-modal) {
+  margin: 0 !important;
+  top: 0 !important;
+  padding: 0 !important;
 }

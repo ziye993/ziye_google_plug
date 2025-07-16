@@ -35,46 +35,54 @@ const AddRuleModal = (props) => {
     <div className={styles.AddRuleModal}>
       <Modal
         open={show}
-        width={400}
-        height={100}
         okText={'保存'}
         closable={false}
+        maskClosable={false}
         onOk={() => {
           onSubmit(form.getFieldValue());
           onCancel();
         }}
+        width={"100vw"}
+        height={'100vh'}
+        style={{ padding: '0', margin: '0', top: '0', bottom: '0', width: '100vw', height: '100vh', maxWidth: '100vw', maxHeight: '100vh' }}
         onCancel={onCancel}
+        modalRender={(modal) => {
+          return <div className={styles.AddRuleModalForm}>{modal}</div>
+        }}
       >
-        <Form layout="vertical" form={form} name="addRuleForm" autoComplete="off" className={styles.AddRuleModalForm}>
-          <FormItem
-            name={'agentName'}
-            style={{ marginBottom: '10px' }}
-            rules={[{ max: 5, required: true }]}
-            label={'备注'}
-          >
-            <Input placeholder='备注' />
-          </FormItem>
-          <FormItem label={'源地址'} name={'agentOriginUrl'} style={{ marginBottom: '10px' }} rules={[{ required: true }]} >
-            <Input placeholder='源地址' />
-          </FormItem>
-          <FormItem label={'代理地址'} name={'agentTargetUrl'} style={{ marginBottom: '10px' }} rules={[{ required: true }]} >
-            <Input placeholder='代理地址' />
-          </FormItem>
-          <FormItem label={'actionType'} style={{ marginBottom: '10px' }} name={"actionType"}>
-            <Select allowClear style={{ width: '100%' }} placeholder="Please select" options={actionType} />
-          </FormItem>
-          <FormItem label={'resourceTypes'} style={{ marginBottom: '10px' }} name={"resourceTypes"}>
-            <Select mode="multiple" allowClear style={{ width: '100%' }} placeholder="Please select" options={resourceTypes} />
-          </FormItem>
-          <FormItem label={'methods'} style={{ marginBottom: '10px' }} name={"methods"}>
-            <Select mode="multiple" allowClear style={{ width: '100%' }} placeholder="Please select" options={methods} />
-          </FormItem>
-          <FormItem name={'proxyHostAddress'} style={{ marginBottom: '10px' }} label="代理服务器地址">
-            <Input placeholder='代理服务器地址,没有可不填使用默认' />
-          </FormItem>
-          <FormItem label={'mock数据'} name={'mock'} style={{ marginBottom: '10px' }} >
-            <Input.TextArea placeholder='mock数据' />
-          </FormItem>
+        <Form layout="vertical" form={form} name="addRuleForm" autoComplete="off" >
+          <div style={{ height: '100%', overflow: 'auto' }}>
+            <FormItem
+              name={'agentName'}
+              style={{ marginBottom: '10px' }}
+              rules={[{ max: 5, required: true }]}
+              label={'备注'}
+            >
+              <Input placeholder='备注' />
+            </FormItem>
+            <FormItem label={'源地址'} name={'agentOriginUrl'} style={{ marginBottom: '10px' }} rules={[{ required: true }]} >
+              <Input placeholder='源地址' />
+            </FormItem>
+            <FormItem label={'代理地址'} name={'agentTargetUrl'} style={{ marginBottom: '10px' }} rules={[{ required: true }]} >
+              <Input placeholder='代理地址' />
+            </FormItem>
+            <FormItem label={'actionType'} style={{ marginBottom: '10px' }} name={"actionType"}>
+              <Select allowClear style={{ width: '100%' }} placeholder="Please select" options={actionType} />
+            </FormItem>
+            <FormItem label={'resourceTypes'} style={{ marginBottom: '10px' }} name={"resourceTypes"}>
+              <Select mode="multiple" allowClear style={{ width: '100%' }} placeholder="Please select" options={resourceTypes} />
+            </FormItem>
+            <FormItem label={'methods'} style={{ marginBottom: '10px' }} name={"methods"}>
+              <Select mode="multiple" allowClear style={{ width: '100%' }} placeholder="Please select" options={methods} />
+            </FormItem>
+            <FormItem name={'proxyHostAddress'} style={{ marginBottom: '10px' }} label="代理服务器地址">
+              <Input placeholder='代理服务器地址,没有可不填使用默认' />
+            </FormItem>
+            <FormItem label={'mock数据'} name={'mock'} style={{ marginBottom: '10px' }} >
+              <Input.TextArea placeholder='mock数据' />
+            </FormItem>
+            
+          </div>
         </Form>
       </Modal>
     </div >
