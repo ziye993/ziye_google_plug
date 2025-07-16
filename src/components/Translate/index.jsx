@@ -25,15 +25,6 @@ const uniRegest = /\s+/g;
 const humpRegest = /\s+([a-z])/gi;
 
 export default function Translate() {
-  // const [formData, setFormData] = useState({
-  //   currentLanguage: 'zh',
-  //   targetLanguage: 'en',
-  //   appid: '',
-  //   appkey: '',
-  //   showUnderline: false,
-  //   showHump: false,
-  //   showSubtraction: false,
-  // });
   const [componentsDate, setComponentsData] = useState({
     showSetting: false,
     tranlRes: {},
@@ -48,7 +39,7 @@ export default function Translate() {
       if (storageData) {
         const objData = typeof storageData === 'string' ? JSON.parse(storageData) : storageData
         setComponentsData(objData?.componentsDate)
-        form.setFieldsValue(objData.formData)
+        form.setFieldsValue(objData?.componentsDate?.formData)
       }
     }
     fetchData();
@@ -71,8 +62,6 @@ export default function Translate() {
     let zhData, enData;
     zhData = tData?.from !== 'zh' ? await getTranlateData(translateContent, currentLanguage, "zh", appid, appkey) : null;//中
     enData = tData?.from !== 'en' ? await getTranlateData(translateContent, currentLanguage, "en", appid, appkey) : null;//英
-
-    console.log(tData, enData, zhData, 'resData')
     const resData = {
       tData: tData?.list || [],
       enData: enData?.list || [],
@@ -84,7 +73,6 @@ export default function Translate() {
     if (tData) {
       setComponentsData((prev) => {
         setStorage("tranlPageData", JSON.stringify({
-          formData,
           componentsDate: { ...prev, tranlRes: resData },
         }));
         return { ...prev, tranlRes: resData }
@@ -97,7 +85,9 @@ export default function Translate() {
   return (<div className={styles.tsl_container}>
     <Form
       form={form}
+
       onValuesChange={(_, values) => {
+        console.log(_, 'formValue')
         setComponentsData(prev => ({ ...prev, formData: values }))
       }}
       layout='vertical'
@@ -146,15 +136,19 @@ export default function Translate() {
           </Space>
         </div>
       </Space >
-      <Form.Item name="translateContent" style={{ position: 'relative' }}>
-        <Input.TextArea
-          placeholder='请输入需要翻译的内容'
-          autoSize={{ minRows: 3, maxRows: 6 }}
-          style={{ inlineSize: '100%', maxBlockSize: '150px' }}
-          onKeyDown={handleTranslate}
-        />
+      <div style={{ position: 'relative' }}>
+        <Form.Item name="translateContent" style={{ position: 'relative' }}>
+          <Input.TextArea
+            placeholder='请输入需要翻译的内容'
+            autoSize={{ minRows: 3, maxRows: 6 }}
+            style={{ inlineSize: '100%', maxBlockSize: '150px' }}
+            onKeyDown={handleTranslate}
+          />
+
+        </Form.Item>
         <span className={styles.current_language}> 当前可能是:{languagesReduc?.[componentsDate?.tranlRes?.from]}</span>
-      </Form.Item>
+      </div>
+
       <Space align="start" className={styles.ret_space}>
         <div className={styles.res_box}>
           <p>目标语言</p>

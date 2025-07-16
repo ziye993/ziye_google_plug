@@ -211,3 +211,14 @@
   transition: all 0.5s;
   background-color: rgba(22, 119, 255, 0.1);
 }
+
+.targetUrl {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.targetUrl :blobal(.ant-checkbox-wrapper) {
+  margin-left: 20px !important;
+}

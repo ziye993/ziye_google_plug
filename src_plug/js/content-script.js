@@ -1,5 +1,7 @@
 // eslint-disable-next-line no-undef
-var storage = chrome && chrome.storage && chrome.storage.local;
+const CHROME = chrome;
+
+var storage = CHROME && CHROME.storage && CHROME.storage.local;
 
 const isHit = (item, content) => {
   if (item === '*' || item === '*=null') {
@@ -14,7 +16,6 @@ const isHit = (item, content) => {
 }
 
 const clearSeachList = () => storage.get("defaultSeachTool", (res) => {
-
   if (res?.defaultSeachTool) {
     const defaultSeachToolConfig = JSON.parse(res?.defaultSeachTool);
     console.log(defaultSeachToolConfig)
@@ -88,6 +89,40 @@ const clearSeachList = () => storage.get("defaultSeachTool", (res) => {
   }
 });
 
+function setTheme(imageUrl) {
+  const ele = document.getElementById("demo-background");
+  if (ele) {
+    ele.style.backgroundImage = `url(${imageUrl})`;
+    return 0;
+  }
+  let newdiv = document.createElement("div");
+  let body = document.getElementsByTagName("html")[0];
+  let path = imageUrl;
+  let urlStr = `url(${path})`;
+  newdiv.setAttribute("id", "demo-background");
+  newdiv.setAttribute(
+    "style",
+    `
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-repeat: no-repeat;
+      background-size: cover;
+      max-width:100vw;
+      max-height:100vh;
+      z-index:-99999;
+      filter:blur(0px) opacity(0);
+      transition: all 0.5s;
+      background-color: rgba(196, 196, 215, 0.5);
+    `
+  );
+  newdiv.style.backgroundImage = urlStr;
+  newdiv.style.backgroundSize = "cover";
+  body.prepend(newdiv);
+  setTimeout(() => (newdiv.style.filter = "blur(5px) opacity(0.7)"), 1);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   if (document.body) {
@@ -109,20 +144,47 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+function setCss(css) {
+  let styleTag = document.getElementById('dynamic-css');
+  if (!styleTag) {
+    styleTag = document.createElement('style');
+    styleTag.id = 'dynamic-css';
+    document.head.appendChild(styleTag);
+  }
+  styleTag.innerHTML = css;
+}
+
+
+
 storage.get("themeData", (res) => {
   const themeList = res?.themeData?.listData || [] // console.log(, 'storeag')
+  console.log(themeList, 'themeList1')
   const used = themeList.find(_ => _.used);
-  if (used) {
-    if (used.pic.startsWith('img_')) {
-      chrome?.runtime?.sendMessage({ type: "GET_THEME_DATA", data: used.pic }, (response) => {
-        console.log(response, 'response')
-      });
-    }
-
+  if (!used.targetUrl) { used.targetNegation = false }
+  if (!used || !used.backgroundImage) {
+    return
   }
 
+  const targetUrlList = (used.targetUrl || '').replace(/[\r\n]/g, '').split(';') || [];
+  const isHit = targetUrlList.some(_ => window.location.href.includes(_))
+  console.log('设置主题', used.targetUrl, isHit, used.targetNegation)
+  if (used.targetUrl) {
+    if (!isHit && !used.targetNegation) {
+      return
+    }
+    if (isHit && used.targetNegation) {
+      return
+    }
+  }
+
+  if (used) {
+    if (used.backgroundImage.startsWith('img_')) {
+      CHROME?.runtime?.sendMessage({ action: "GET_THEME_DATA", data: used.backgroundImage }, (response) => {
+        setTheme(response)
+        setCss(used.css)
+      });
+    } else {
+      setTheme(used.backgroundImage)
+    }
+  }
 })
-
-// eslint-disable-next-line no-undef
-
-

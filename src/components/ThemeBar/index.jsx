@@ -1,34 +1,35 @@
-import { Button, Form, Input, Modal, Radio, Space, Upload, Tag } from 'antd';
+import { Button, Form, Input, Modal, Radio, Space, Upload, Tag, Checkbox, Divider, Switch } from 'antd';
 import styles from './index.module.css';
 import { useEffect, useState } from 'react';
-import { getStorage, openDB, setStorage } from '../../lib/storege';
+import { deleteIndexDb, getStorage, setIndexDb, setStorage } from '../../lib/storege';
 import { PlusOutlined } from '@ant-design/icons';
 import useRevoke from '../../hooks/useRevoke';
+import { fileToBase64 } from '../../lib/getBase64ToFile';
+import MonacoEditorFormField from '../CssEdit';
+
 
 const uploadMap = {
   "uploading": '压缩中',
-  done: '完成'
+  'done': '完成'
 }
 
 export default function ThemeBar() {
   const [modalShow, setModalShow] = useState(false);
   const [formData, setFormData] = useState({ bgType: 'pic' });
   const [listData, setListData] = useState([]);
-  const [file, setfile] = useState([]);
   const { addMask, revoke, hasMask } = useRevoke();
   const [form] = Form.useForm();
 
   const edit = (record) => {
-    setfile([{ name: record.backgroundImage, status: 'done' }]);
     setFormData({ ...record });
-    form.setFieldsValue(record);
+    form.setFieldsValue({ ...record });
     setModalShow(true)
   };
 
   const use = (record) => {
     const newList = [...listData].map(_ => {
       if (_.id === record.id) {
-        return { ..._, used: true }
+        return { ..._, used: !record.used }
       } else {
         return { ..._, used: false }
       }
@@ -39,35 +40,42 @@ export default function ThemeBar() {
 
   const del = (record) => {
     if (record.id) {
-      const newList = [...listData].filter(_ => _.id !== record.id);
-      setListData(newList);
-      updateStorege(newList)
+      setListData(prev => {
+        const newList = [...prev].filter(_ => _.id !== record.id);
+        updateStorege(newList)
+        return newList
+      });
+
     }
   }
 
   const readDel = (record) => {
     if (hasMask(record.id)) {
       revoke(record.id, () => {
-        const newList = [...listData].map(_ => {
-          if (_.id === record.id) {
-            return { ..._, readDel: false }
-          } else {
-            return _
-          }
-        });
-        setListData(newList)
+        setListData(prev => {
+          const newList = [...prev].map(_ => {
+            if (_.id === record.id) {
+              return { ..._, readDel: false }
+            } else {
+              return _
+            }
+          });
+          return newList
+        })
       })
       return
     }
     if (record.id) {
-      const newList = [...listData].map(_ => {
-        if (_.id === record.id) {
-          return { ..._, readDel: true }
-        } else {
-          return _
-        }
-      });
-      setListData(newList)
+      setListData(prev => {
+        const newList = [...prev].map(_ => {
+          if (_.id === record.id) {
+            return { ..._, readDel: true }
+          } else {
+            return _
+          }
+        });
+        return newList
+      })
       addMask(record.id, 3000, () => {
         del(record)
       });
@@ -76,13 +84,14 @@ export default function ThemeBar() {
 
   const modalOk = () => {
     const data = form.getFieldsValue();
-    console.log(data);
+    console.log(data, formData);
     const isEdit = listData.findIndex(_ => _.id === formData.id) >= 0;
     if (isEdit) {
       const newList = [...listData].map(_ => {
         if (_.id === data.id) {
           return {
-            ...data
+            ...data,
+            ...formData,
           }
         } else {
           return _
@@ -109,23 +118,13 @@ export default function ThemeBar() {
   }
 
   const customRequest = async ({ file, onSuccess }) => {
-    setfile([{ name: file.name, size: file.size, status: 'uploading' }])
     const fileId = `img_${Date.now()}`; // 简单生成一个唯一ID
-    form.setFieldValue('backgroundImage', fileId)
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const result = e.target.result;
-      const blob = new Blob([result], { type: file.type });
-      // await setStorage(fileId, { name: file.name, type: file.type }); // 元数据
-      const db = await openDB();
-      const tx = db.transaction('images', 'readwrite');
-      tx.objectStore('images').put(blob, fileId);
-      await tx.done;
-      onSuccess?.('ok');
-      setfile([{ name: file.name, size: file.size, status: 'done' }]);
-
-    };
-    reader.readAsArrayBuffer(file);
+    setFormData(prev => ({ ...prev, status: 'uploading', fileName: file.name }))
+    const base64Data = await fileToBase64(file)
+    await setIndexDb(fileId, base64Data);
+    onSuccess?.('ok');
+    setFormData(prev => ({ ...prev, status: 'done', }))
+    form.setFieldValue('backgroundImage', fileId);
   }
 
   const updateStorege = (data) => {
@@ -151,7 +150,7 @@ export default function ThemeBar() {
           <p>{_i}</p>
           <p className={styles.themeName}>{_?.thName}</p>
           <Space>
-            {!_.used && <Button type="link" onClick={() => !_?.readDel && use(_)}>使用</Button>}
+            <Button type="link" onClick={() => use(_)}>{_.used ? '取消' : '使用'}</Button>
             <Button type="link" onClick={() => !_?.readDel && edit(_)}>编辑</Button>
             <Button type="link" onClick={() => readDel(_)}>{_?.readDel ? '撤销' : '删除'}</Button>
           </Space>
@@ -163,7 +162,7 @@ export default function ThemeBar() {
       title="新主题"
       open={modalShow}
       style={{ padding: '0', margin: '0', top: '0', bottom: '0', width: '100vw', height: '100vh', maxWidth: '100vw', maxHeight: '100vh' }}
-      onCancel={() => { setModalShow(false); form.resetFields() }}
+      onCancel={() => { deleteIndexDb(form.getFieldValue('backgroundImage')); setModalShow(false); form.resetFields() }}
       onOk={() => { modalOk(); form.resetFields() }}
       modalRender={(modal) => {
         return <div className={styles.AddRuleModalForm}>{modal}</div>
@@ -184,7 +183,6 @@ export default function ThemeBar() {
               <Upload
                 accept='.png,.jpg,.gif,.jpeg,.bmp,.webp'
                 showUploadList={false}
-                fileList={file}
                 customRequest={customRequest}
               >
                 <Button style={{ width: 300 }}>上传</Button>
@@ -197,21 +195,30 @@ export default function ThemeBar() {
                 size="small"
                 value={formData.bgType}
                 onChange={(e) => { setFormData(prev => ({ ...prev, bgType: e.target.value })) }}
-              >F
+              >
                 <Radio.Button value="pic">图片</Radio.Button>
                 <Radio.Button value="link">链接</Radio.Button>
               </Radio.Group>
             </Form.Item>
           </div>
         </Space>
-        {formData?.bgType === 'pic' && file.map(_ => {
-          return <p style={{ marginBottom: '20px' }}>
-            <Tag color="green">{_.name} </Tag>
-            {_.status === 'done' ? <Tag color="cyan">{uploadMap[_.status] || ''}</Tag> : <Tag color="volcano">{uploadMap[_.status] || ''}</Tag>}
-          </p>
-        })}
+        {formData?.bgType === 'pic' && <p style={{ marginBottom: '20px' }}>
+          {formData.fileName && <Tag color="green">{formData.fileName} </Tag>}
+          {formData.status && (formData.status === 'done' ? <Tag color="cyan">{uploadMap[formData.status] || ''}</Tag> : <Tag color="volcano">{uploadMap[formData.status] || ''}</Tag>)}
+        </p>}
+        <div className={styles.targetUrl}>
+          <Form.Item name='targetUrl' label="目标url">
+            <Input.TextArea style={{ maxHeight: '200px' }} placeholder='不填则是所有网页,子项 ":" 分割' />
+          </Form.Item>
+          <Form.Item name='targetNegation' style={{ marginLeft: '16px' }} label='取反'>
+            <Switch disabled={!formData.targetUrl}></Switch>
+          </Form.Item>
+        </div>
+
+
+
         <Form.Item name="css" label="css" >
-          <Input.TextArea style={{ maxHeight: '200px' }} />
+          <MonacoEditorFormField />
         </Form.Item>
       </Form>
     </Modal>

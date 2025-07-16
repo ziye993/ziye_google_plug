@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-import { openDB as idbOpenDB } from 'idb';
 // 设置数据：传入 key 和 data 对象
 export function setStorage(id, data) {
   if (chrome?.storage?.local === undefined && localStorage) {
@@ -41,18 +40,50 @@ export function getStorage(id) {
 }
 
 
-export async function openDB() {
-  return idbOpenDB('ThemeImages', 1, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains('images')) {
-        db.createObjectStore('images');
+const DB_NAME = 'theme';
+const STORE_NAME = 'themeStore';
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1); // 指定版本号
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME); // 创建 object store
       }
-    },
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+export function setIndexDb(id, data) {
+  return openDB().then(db => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).put(data, id);
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
   });
 }
 
-export async function getImageBlobById(id) {
-  const db = await openDB();
-  const tx = db.transaction('images', 'readonly');
-  return tx.objectStore('images').get(id);
+export function getIndexDb(id) {
+  return openDB().then(db => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    return new Promise((resolve, reject) => {
+      const req = tx.objectStore(STORE_NAME).get(id);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  });
+}
+
+export function deleteIndexDb(id) {
+  return openDB().then(db => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).delete(id);
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  });
 }
