@@ -7,13 +7,14 @@ import AgentBar from '../../components/AgentBar';
 import QrCodeTranslate from '../../components/QrCodeTranslate';
 import SearchSimplifyBar from '../../components/SearchSimplifyBar';
 import ThemeBar from '../../components/ThemeBar';
+import AgentScript from '../../components/AgentScript';
 
 const items = [
   { label: '翻译', key: 'translate', children: <Translate /> },
   { label: '搜索精简', key: 'searchSimplify', children: <SearchSimplifyBar /> },
   { label: '二维码转换', key: 'tool', children: <QrCodeTranslate /> },
   { label: '主题', key: 'theme', children: <ThemeBar /> },
-  { label: '中间脚本', key: 'therJobo', children: <>中间脚本</> },
+  { label: '中间脚本', key: 'therJobo', children: <AgentScript /> },
   { label: '代理', key: 'proxy', children: <AgentBar /> },
 
 ];

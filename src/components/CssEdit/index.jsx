@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as monaco from 'monaco-editor';
 
-const MonacoEditorFormField = ({ value = '', onChange }) => {
+const MonacoEditorFormField = ({ value = '', type = 'css', onChange }) => {
   const containerRef = useRef(null);
   const editorRef = useRef(null);
 
@@ -27,7 +27,7 @@ const MonacoEditorFormField = ({ value = '', onChange }) => {
 
     const editor = monaco.editor.create(containerRef.current, {
       value,
-      language: 'css',
+      language: type,
       theme: 'vs-dark',
       automaticLayout: true,
       fontSize: 14,
@@ -50,10 +50,11 @@ const MonacoEditorFormField = ({ value = '', onChange }) => {
 
   // 更新外部传入的 value（避免外部 value 改变后编辑器不更新）
   useEffect(() => {
-    if (editorRef.current && value !== editorRef.current.getValue()) {
+    if (editorRef.current && value !== editorRef.current.getValue())
+    {
       editorRef.current.setValue(value);
     }
-  }, [value]);
+  }, [ value ]);
 
   return (
     <div

@@ -4,11 +4,13 @@ const CHROME = chrome;
 var storage = CHROME && CHROME.storage && CHROME.storage.local;
 
 const isHit = (item, content) => {
-  if (item === '*' || item === '*=null') {
+  if (item === '*' || item === '*=null')
+  {
     return true
   }
 
-  if (item[0] === '!') {
+  if (item[ 0 ] === '!')
+  {
     return !content.includes(item.substring(1))
   }
   console.log(item)
@@ -16,44 +18,53 @@ const isHit = (item, content) => {
 }
 
 const clearSeachList = () => storage.get("defaultSeachTool", (res) => {
-  if (res?.defaultSeachTool) {
+  if (res?.defaultSeachTool)
+  {
     const defaultSeachToolConfig = JSON.parse(res?.defaultSeachTool);
     console.log(defaultSeachToolConfig)
-    if (!defaultSeachToolConfig.open) {
+    if (!defaultSeachToolConfig.open)
+    {
       return
     }
     const defaultSeachTool = defaultSeachToolConfig.defaultSeachTool || [];
     defaultSeachTool.forEach(st => {
-      if (!st.checked) {
+      if (!st.checked)
+      {
         return
       }
       const urlIsHit = window.location.href.includes(st.url)  //defaultSeachTool.findIndex(el => window.location.href.includes(el.url));
-      if (!urlIsHit) {
+      if (!urlIsHit)
+      {
         return
       }
       //命中url
       const configItems = st.config || [];
       const boxNames = st.boxName || [];
-      if (!configItems.length || !boxNames.length) {
+      if (!configItems.length || !boxNames.length)
+      {
         return
       }
       boxNames.forEach(item => { //命中的所有元素
         const EleList = document.querySelectorAll(item);
         console.log(EleList, 'res')
-        if (!EleList) {
+        if (!EleList)
+        {
           return
         }
 
-        for (const child of EleList) {
+        for (const child of EleList)
+        {
           const content = child.textContent.trim();
           const cloneChild = child.cloneNode(true);
           configItems.forEach(configItem => { //需要命中的文本 * 表示所有
 
-            if (!isHit(configItem, content)) {
+            if (!isHit(configItem, content))
+            {
               return
             }
             console.log(content, 'res')
-            if (configItem === '*=null') { // 隐藏所有
+            if (configItem === '*=null')
+            { // 隐藏所有
               child.style.overflow = 'hidden';
               child.innerHTML = "";
               child.style.display = 'none';
@@ -91,14 +102,13 @@ const clearSeachList = () => storage.get("defaultSeachTool", (res) => {
 
 function setTheme(imageUrl) {
   const ele = document.getElementById("demo-background");
-  if (ele) {
+  if (ele)
+  {
     ele.style.backgroundImage = `url(${imageUrl})`;
     return 0;
   }
   let newdiv = document.createElement("div");
-  let body = document.getElementsByTagName("html")[0];
-  let path = imageUrl;
-  let urlStr = `url(${path})`;
+  let body = document.getElementsByTagName("html")[ 0 ];
   newdiv.setAttribute("id", "demo-background");
   newdiv.setAttribute(
     "style",
@@ -118,19 +128,21 @@ function setTheme(imageUrl) {
       background-color: rgba(196, 196, 215, 0.5);
     `
   );
-  newdiv.style.backgroundImage = urlStr;
   newdiv.style.backgroundSize = "cover";
   body.prepend(newdiv);
+
   setTimeout(() => (newdiv.style.filter = "blur(5px) opacity(0.7)"), 1);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (document.body) {
+  if (document.body)
+  {
     let previousUrl = window.location.href;
     clearSeachList();
     const observer = new MutationObserver(() => {
       const currentUrl = window.location.href;
-      if (currentUrl !== previousUrl) {
+      if (currentUrl !== previousUrl)
+      {
         console.log('URL 变化了:', currentUrl);
         previousUrl = currentUrl;
         clearSeachList();
@@ -146,7 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function setCss(css) {
   let styleTag = document.getElementById('dynamic-css');
-  if (!styleTag) {
+  if (!styleTag)
+  {
     styleTag = document.createElement('style');
     styleTag.id = 'dynamic-css';
     document.head.appendChild(styleTag);
@@ -161,30 +174,55 @@ storage.get("themeData", (res) => {
   console.log(themeList, 'themeList1')
   const used = themeList.find(_ => _.used);
   if (!used.targetUrl) { used.targetNegation = false }
-  if (!used || !used.backgroundImage) {
+  if (!used || !used.backgroundImage)
+  {
     return
   }
 
   const targetUrlList = (used.targetUrl || '').replace(/[\r\n]/g, '').split(';') || [];
   const isHit = targetUrlList.some(_ => window.location.href.includes(_))
   console.log('设置主题', used.targetUrl, isHit, used.targetNegation)
-  if (used.targetUrl) {
-    if (!isHit && !used.targetNegation) {
+  if (used.targetUrl)
+  {
+    if (!isHit && !used.targetNegation)
+    {
       return
     }
-    if (isHit && used.targetNegation) {
+    if (isHit && used.targetNegation)
+    {
       return
     }
   }
 
-  if (used) {
-    if (used.backgroundImage.startsWith('img_')) {
+  if (used)
+  {
+    if (used.backgroundImage.startsWith('img_'))
+    {
       CHROME?.runtime?.sendMessage({ action: "GET_THEME_DATA", data: used.backgroundImage }, (response) => {
         setTheme(response)
         setCss(used.css)
       });
-    } else {
+    } else
+    {
       setTheme(used.backgroundImage)
     }
   }
-})
+});
+// 在 document_start 阶段立即隐藏页面
+document.documentElement.style.opacity = '0';
+document.documentElement.style.transition = 'opacity 0.3s ease';
+
+// 页面加载后渐显
+window.addEventListener('load', () => {
+  requestAnimationFrame(() => {
+    document.documentElement.style.opacity = '1';
+  });
+});
+
+window.addEventListener('beforeunload', (e) => {
+  document.documentElement.style.transition = 'all 0.3s';
+  document.documentElement.style.opacity = 0;
+  const bg = document.querySelector('#demo-background');
+  bg.style.backgroundImage = `url(./loading.gif)`;
+  // bg.style.opacity = 0;
+});

@@ -2,10 +2,11 @@ import { Button, Form, Input, Modal, Radio, Space, Upload, Tag, Checkbox, Divide
 import styles from './index.module.css';
 import { useEffect, useState } from 'react';
 import { deleteIndexDb, getStorage, setIndexDb, setStorage } from '../../lib/storege';
-import { PlusOutlined } from '@ant-design/icons';
 import useRevoke from '../../hooks/useRevoke';
 import { fileToBase64 } from '../../lib/getBase64ToFile';
 import MonacoEditorFormField from '../CssEdit';
+import AddButton from '../../globalComponents/AddButton';
+import ListBox from '../../globalComponents/ListBox';
 
 
 const uploadMap = {
@@ -14,11 +15,11 @@ const uploadMap = {
 }
 
 export default function ThemeBar() {
-  const [modalShow, setModalShow] = useState(false);
-  const [formData, setFormData] = useState({ bgType: 'pic' });
-  const [listData, setListData] = useState([]);
+  const [ modalShow, setModalShow ] = useState(false);
+  const [ formData, setFormData ] = useState({ bgType: 'pic' });
+  const [ listData, setListData ] = useState([]);
   const { addMask, revoke, hasMask } = useRevoke();
-  const [form] = Form.useForm();
+  const [ form ] = Form.useForm();
 
   const edit = (record) => {
     setFormData({ ...record });
@@ -27,10 +28,12 @@ export default function ThemeBar() {
   };
 
   const use = (record) => {
-    const newList = [...listData].map(_ => {
-      if (_.id === record.id) {
+    const newList = [ ...listData ].map(_ => {
+      if (_.id === record.id)
+      {
         return { ..._, used: !record.used }
-      } else {
+      } else
+      {
         return { ..._, used: false }
       }
     });
@@ -39,9 +42,10 @@ export default function ThemeBar() {
   }
 
   const del = (record) => {
-    if (record.id) {
+    if (record.id)
+    {
       setListData(prev => {
-        const newList = [...prev].filter(_ => _.id !== record.id);
+        const newList = [ ...prev ].filter(_ => _.id !== record.id);
         updateStorege(newList)
         return newList
       });
@@ -50,13 +54,16 @@ export default function ThemeBar() {
   }
 
   const readDel = (record) => {
-    if (hasMask(record.id)) {
+    if (hasMask(record.id))
+    {
       revoke(record.id, () => {
         setListData(prev => {
-          const newList = [...prev].map(_ => {
-            if (_.id === record.id) {
+          const newList = [ ...prev ].map(_ => {
+            if (_.id === record.id)
+            {
               return { ..._, readDel: false }
-            } else {
+            } else
+            {
               return _
             }
           });
@@ -65,12 +72,15 @@ export default function ThemeBar() {
       })
       return
     }
-    if (record.id) {
+    if (record.id)
+    {
       setListData(prev => {
-        const newList = [...prev].map(_ => {
-          if (_.id === record.id) {
+        const newList = [ ...prev ].map(_ => {
+          if (_.id === record.id)
+          {
             return { ..._, readDel: true }
-          } else {
+          } else
+          {
             return _
           }
         });
@@ -86,25 +96,29 @@ export default function ThemeBar() {
     const data = form.getFieldsValue();
     console.log(data, formData);
     const isEdit = listData.findIndex(_ => _.id === formData.id) >= 0;
-    if (isEdit) {
-      const newList = [...listData].map(_ => {
-        if (_.id === data.id) {
+    if (isEdit)
+    {
+      const newList = [ ...listData ].map(_ => {
+        if (_.id === data.id)
+        {
           return {
             ...data,
             ...formData,
           }
-        } else {
+        } else
+        {
           return _
         }
       });
       setListData(newList);
       updateStorege(newList)
-    } else {
+    } else
+    {
       setListData(prev => {
-        const newArr = [...prev, {
+        const newArr = [ ...prev, {
           id: Date.now(),
           ...formData
-        }];
+        } ];
         setStorage('themeData', {
           listData: newArr,
         });
@@ -144,9 +158,9 @@ export default function ThemeBar() {
   }, []);
 
   return <div className={styles.box}>
-    <div className={styles.listBox}>
+    <ListBox>
       {listData?.map((_, _i) => {
-        return <div className={`${styles.listItem} ${_?.readDel ? styles.readDel : styles.revDel} ${_.used ? styles.usedBox : ''}`} key={`theme_${_.id}`}>
+        return <ListBox.Item>
           <p>{_i}</p>
           <p className={styles.themeName}>{_?.thName}</p>
           <Space>
@@ -154,10 +168,10 @@ export default function ThemeBar() {
             <Button type="link" onClick={() => !_?.readDel && edit(_)}>编辑</Button>
             <Button type="link" onClick={() => readDel(_)}>{_?.readDel ? '撤销' : '删除'}</Button>
           </Space>
-        </div>
+        </ListBox.Item>
       })}
-      <div className={styles.list_add} onClick={() => { setModalShow(true); setFormData({}); }} ><PlusOutlined /></div>
-    </div>
+      <AddButton onClick={() => { setModalShow(true); setFormData({}); }} />
+    </ListBox>
     <Modal
       title="新主题"
       open={modalShow}
@@ -204,7 +218,7 @@ export default function ThemeBar() {
         </Space>
         {formData?.bgType === 'pic' && <p style={{ marginBottom: '20px' }}>
           {formData.fileName && <Tag color="green">{formData.fileName} </Tag>}
-          {formData.status && (formData.status === 'done' ? <Tag color="cyan">{uploadMap[formData.status] || ''}</Tag> : <Tag color="volcano">{uploadMap[formData.status] || ''}</Tag>)}
+          {formData.status && (formData.status === 'done' ? <Tag color="cyan">{uploadMap[ formData.status ] || ''}</Tag> : <Tag color="volcano">{uploadMap[ formData.status ] || ''}</Tag>)}
         </p>}
         <div className={styles.targetUrl}>
           <Form.Item name='targetUrl' label="目标url">
@@ -214,9 +228,6 @@ export default function ThemeBar() {
             <Switch disabled={!formData.targetUrl}></Switch>
           </Form.Item>
         </div>
-
-
-
         <Form.Item name="css" label="css" >
           <MonacoEditorFormField />
         </Form.Item>

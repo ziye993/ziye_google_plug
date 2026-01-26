@@ -29,6 +29,9 @@
     "https://api.fanyi.baidu.com/*",
     "<all_urls>"
   ],
+  "chrome_url_overrides": {
+    "newtab": "html/newtab.html"
+  },
   "permissions": [
     "tabs",
     "storage",
