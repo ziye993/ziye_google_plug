@@ -52,7 +52,7 @@ html {
 }
 
 body {
-  background-color: #fff;
+  /* background-color: #fff; */
   /* background-color: var(--body-background); */
   font-size: 18px;
   min-height: 400px;
@@ -62,4 +62,11 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: light) {
+  button { color: #333; }
+}
+@media (prefers-color-scheme: dark) {
+  button { color: #ddd; }
 }

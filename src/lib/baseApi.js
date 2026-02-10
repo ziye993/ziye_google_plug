@@ -16,6 +16,17 @@ function jsonp(param) {
   })
 }
 
+const fetchWithTimeout = (url, options = {}, timeout = 500) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+
+  return fetch(url, {
+    ...options,
+    signal: controller.signal,
+  }).finally(() => clearTimeout(timer));
+};
+
 export {
-  jsonp
+  jsonp,
+  fetchWithTimeout
 }

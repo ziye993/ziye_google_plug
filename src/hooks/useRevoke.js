@@ -3,10 +3,13 @@ import { useRef } from "react";
 export default function useRevoke() {
   const idRef = useRef({});
 
-  const addMask = (id, timeout, cb) => {
+  const addMask = (_id, timeout, cb) => {
+    let id = _id;
     if (!cb) return
+    if (!_id) id = Date?.now();
     idRef.current[id] = setTimeout(() => {
-      cb?.(id, timeout); idRef.current[id] = undefined
+      cb?.(id, timeout);
+      revoke(id)
     }, timeout);
   }
 
@@ -15,13 +18,20 @@ export default function useRevoke() {
       return
     }
     clearTimeout(idRef.current[id]);
-    idRef.current[id] = undefined
+    const newData = { ...idRef.current }
+    delete newData[id];
+    idRef.current = newData
     cb?.(id);
   }
   const hasMask = (id) => {
     return !!idRef.current[id]
   }
+  const revokeAll = () => {
+    for (const key in idRef.current) {
+      if (!Object.hasOwn(idRef.current, key)) continue;
+      revoke(key)
+    }
+  }
 
-
-  return { addMask, revoke, hasMask }
+  return { addMask, revoke, hasMask, revokeAll }
 }
