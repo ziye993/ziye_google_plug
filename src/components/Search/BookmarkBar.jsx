@@ -3,12 +3,35 @@ import { FolderOutlined, RightOutlined } from '@ant-design/icons';
 import styles from './BookmarkBar.module.less';
 
 function faviconUrl(url) {
+  if (!url || typeof chrome === 'undefined' || !chrome.runtime?.getURL) return '';
   try {
-    const u = new URL(url);
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u.hostname)}&sz=32`;
+    const u = new URL(chrome.runtime.getURL('/_favicon/'));
+    u.searchParams.set('pageUrl', url);
+    u.searchParams.set('size', '32');
+    return u.toString();
   } catch {
     return '';
   }
+}
+
+function BookmarkIcon({ url, title }) {
+  const [failed, setFailed] = useState(false);
+  const src = faviconUrl(url);
+  if (!src || failed) {
+    const letter = (title || '?').trim().charAt(0).toUpperCase() || '?';
+    return <span className={styles.favFallback}>{letter}</span>;
+  }
+  return (
+    <img
+      className={styles.fav}
+      src={src}
+      alt=""
+      width={14}
+      height={14}
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 function openUrl(url) {
@@ -52,11 +75,7 @@ function MenuRow({ node }) {
         openUrl(node.url);
       }}
     >
-      {faviconUrl(node.url) ? (
-        <img className={styles.fav} src={faviconUrl(node.url)} alt="" />
-      ) : (
-        <span className={styles.favFallback} />
-      )}
+      <BookmarkIcon url={node.url} title={node.title} />
       <span className={styles.title}>{node.title || node.url}</span>
     </a>
   );
@@ -96,11 +115,7 @@ function TopItem({ node }) {
         openUrl(node.url);
       }}
     >
-      {faviconUrl(node.url) ? (
-        <img className={styles.fav} src={faviconUrl(node.url)} alt="" />
-      ) : (
-        <span className={styles.favFallback} />
-      )}
+      <BookmarkIcon url={node.url} title={node.title} />
       <span className={styles.title}>{node.title || node.url}</span>
     </a>
   );

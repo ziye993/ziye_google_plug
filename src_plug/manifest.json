@@ -41,6 +41,7 @@
     "storage",
     "unlimitedStorage",
     "bookmarks",
+    "favicon",
     "cookies",
     "proxy",
     "webNavigation",
@@ -57,6 +58,17 @@
       ],
       "matches": [
         "<all_urls>"
+      ]
+    },
+    {
+      "resources": [
+        "_favicon/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "extension_ids": [
+        "*"
       ]
     }
   ],

@@ -38,6 +38,7 @@ export default {
     'storage',
     'unlimitedStorage',
     'bookmarks',
+    'favicon',
     'cookies',
     'proxy',
     'webNavigation',
@@ -50,6 +51,11 @@ export default {
     {
       resources: ['assets/background.png', 'assets/background-null.png'],
       matches: ['<all_urls>'],
+    },
+    {
+      resources: ['_favicon/*'],
+      matches: ['<all_urls>'],
+      extension_ids: ['*'],
     },
   ],
   content_security_policy: {
