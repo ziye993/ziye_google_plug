@@ -4,11 +4,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   margin: 0;
-  padding: 48px 20px 64px;
+  padding: 56px 20px 64px;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
   font-family: var(--ziye-font-body, 'IBM Plex Sans', sans-serif);
   color: var(--ziye-ink, #15202b);
@@ -16,6 +16,7 @@
     radial-gradient(1000px 520px at 12% -8%, rgba(15, 118, 110, 0.16), transparent 55%),
     radial-gradient(800px 420px at 92% 8%, rgba(56, 102, 150, 0.12), transparent 52%),
     linear-gradient(168deg, #e8eef4 0%, #f4f7fa 45%, #eef3f7 100%);
+  transition: padding 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 
   &::before {
     content: '';
@@ -31,12 +32,55 @@
   }
 }
 
+.BoxSearch {
+  justify-content: center;
+}
+
+.BoxAi {
+  justify-content: flex-start;
+  padding: 52px 20px 0;
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  width: min(860px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  transition: flex 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.BoxAi .stage {
+  width: min(920px, 100%);
+  height: calc(100vh - 52px);
+  max-height: calc(100vh - 52px);
+}
+
 .hero {
   position: relative;
   z-index: 1;
   text-align: center;
   margin-bottom: 28px;
-  animation: ziye-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  max-height: 220px;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(0) scale(1);
+}
+
+.BoxAi .hero {
+  opacity: 0;
+  max-height: 0;
+  margin: 0;
+  pointer-events: none;
+  transform: translateY(-12px) scale(0.96);
 }
 
 .mark {
@@ -72,6 +116,28 @@
   letter-spacing: 0.02em;
 }
 
+.chatArea {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.05s,
+    max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.BoxAi .chatArea {
+  opacity: 1;
+  max-height: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+}
+
 .searchBox {
   position: relative;
   z-index: 2;
@@ -80,7 +146,14 @@
   flex-direction: column;
   align-items: stretch;
   gap: 14px;
-  animation: ziye-fade-up 0.55s 0.08s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition:
+    width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.35s,
+    border-color 0.35s,
+    box-shadow 0.35s;
 
   .buttonGrunp {
     display: flex;
@@ -110,7 +183,8 @@
     color: #15202b;
     transition:
       border-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 
     &::placeholder {
       color: #8a9aab;
@@ -148,20 +222,59 @@
       background: #fff;
     }
 
-    &:first-child {
-      background: linear-gradient(145deg, #0f766e, #0a5c56);
-      border-color: transparent;
-      color: #fff;
-    }
-
-    &:first-child:hover {
-      filter: brightness(1.05);
-    }
-
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
       transform: none;
+    }
+  }
+
+  .btnSearch {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: linear-gradient(145deg, #0f766e, #0a5c56);
+    border-color: transparent;
+    color: #fff;
+    transition:
+      transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      background: linear-gradient(145deg, #14b8a6, #0f766e);
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    > span {
+      position: relative;
+      z-index: 1;
+      transition: color 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    &:hover {
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(15, 118, 110, 0.28);
+    }
+
+    &:hover::before {
+      opacity: 1;
+    }
+
+    &:hover .rainbow-text {
+      color: #fff;
+    }
+
+    &:hover .bingSearchSpan {
+      color: rgba(255, 255, 255, 0.88);
     }
   }
 
@@ -186,26 +299,105 @@
   }
 }
 
+/* 对话模式：输入区沉底，类似 ChatGPT composer */
 .aiChatInputBox {
-  position: relative;
-  width: min(720px, 100%);
+  width: min(860px, 100%) !important;
+  margin-top: auto;
+  padding: 12px 8px 18px;
+  border-top: 1px solid rgba(21, 32, 43, 0.08);
+  background: linear-gradient(180deg, rgba(244, 247, 250, 0), rgba(244, 247, 250, 0.92) 28%, #f4f7fa 100%);
+  backdrop-filter: blur(8px);
+
+  input {
+    height: 48px;
+  }
 }
 
-.aiReply {
-  margin-top: 8px;
-  width: min(720px, 100%);
-  padding: 16px 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(21, 32, 43, 0.1);
-  background: rgba(255, 255, 255, 0.78);
-  backdrop-filter: blur(10px);
-  white-space: pre-wrap;
-  line-height: 1.65;
-  font-size: 14px;
-  color: #15202b;
-  animation: ziye-fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+.dropMask {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(21, 32, 43, 0.35);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.dropCard {
+  padding: 28px 36px;
+  border-radius: 16px;
+  border: 2px dashed rgba(255, 255, 255, 0.85);
+  background: rgba(15, 118, 110, 0.88);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.attachRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.attachItem {
   position: relative;
-  z-index: 1;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(21, 32, 43, 0.12);
+  background: #fff;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.attachRemove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(21, 32, 43, 0.65);
+  color: #fff;
+  font-size: 10px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.attachBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(15, 118, 110, 0.1);
+  color: #0f766e;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  &:hover {
+    background: rgba(15, 118, 110, 0.18);
+  }
+}
+
+.inputWithAttach {
+  padding-right: 52px !important;
 }
 
 @keyframes showhistory {
@@ -216,6 +408,17 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes ziye-mark-in {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -330,7 +533,10 @@
 
 @media (max-width: 640px) {
   .Box {
-    padding: 32px 14px 48px;
+    padding: 48px 14px 48px;
+  }
+
+  .BoxSearch {
     justify-content: flex-start;
     padding-top: 18vh;
   }

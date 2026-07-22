@@ -1,0 +1,216 @@
+.bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: 42px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(21, 32, 43, 0.08);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: visible;
+}
+
+.track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.topItem {
+  position: relative;
+  flex-shrink: 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.chip,
+.topLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 168px;
+  height: 30px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #15202b;
+  font-size: 12px;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(15, 118, 110, 0.12);
+    outline: none;
+  }
+}
+
+/* 顶栏标题可省略；菜单内标题单行完整展示 */
+.chip .title,
+.topLink .title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title {
+  white-space: nowrap;
+  text-align: left;
+  flex: 0 1 auto;
+}
+
+.icon {
+  color: #0f766e;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.arrow {
+  margin-left: 12px;
+  font-size: 10px;
+  color: #8a9aab;
+  flex-shrink: 0;
+}
+
+.fav {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.favFallback {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(15, 118, 110, 0.2);
+  flex-shrink: 0;
+}
+
+/* —— 竖排菜单：禁止 overflow 裁切子菜单 —— */
+.menu {
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1px;
+  position: absolute;
+  z-index: 220;
+  width: max-content;
+  min-width: 220px;
+  max-width: none;
+  /* 关键：不能 auto/hidden，否则侧边子菜单会被挡住 */
+  overflow: visible;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(21, 32, 43, 0.12);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(21, 32, 43, 0.14);
+}
+
+.menuDown {
+  top: 100%;
+  left: 0;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -10px;
+    height: 12px;
+  }
+}
+
+.menuSide {
+  top: -6px;
+  left: calc(100% - 2px);
+  z-index: 230;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -10px;
+    width: 12px;
+  }
+}
+
+.topFolder:hover > .menu,
+.topFolder:focus-within > .menu,
+.folderRow:hover > .menu,
+.folderRow:focus-within > .menu {
+  display: flex;
+}
+
+.folderRow:hover > .menu,
+.folderRow:focus-within > .menu {
+  z-index: 240;
+}
+
+.topFolder:hover > .chip,
+.topFolder:focus-within > .chip,
+.folderRow:hover > .rowBtn,
+.folderRow:focus-within > .rowBtn {
+  background: rgba(15, 118, 110, 0.12);
+}
+
+.row {
+  position: relative;
+  width: 100%;
+}
+
+.rowBtn,
+.linkRow {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #15202b;
+  font-size: 13px;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(15, 118, 110, 0.1);
+    outline: none;
+  }
+}
+
+.rowBtn .title,
+.linkRow .title {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.empty {
+  padding: 10px 12px;
+  color: #8a9aab;
+  font-size: 12px;
+  white-space: nowrap;
+}

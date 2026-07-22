@@ -1,25 +1,20 @@
+import { openaiChat } from '../../lib/openaiChat';
+
 /**
- * 调用本地 / 自定义 AI 聊天接口
- * @param {string} info 用户输入
- * @param {{ apiKey?: string, apiBase?: string }} config
+ * OpenAI 兼容聊天（支持文本 + 图片）
+ * @param {{ apiKey?, apiBase?, model?, provider?, messages?, onDelta?, signal? }} config
+ *   messages 须已包含本轮 user 消息
  */
-export const chat = async (info, config = {}) => {
-  const url = config.apiBase || 'http://localhost:30000/api/ai/chat';
-  const headers = { 'Content-Type': 'application/json' };
-  if (config.apiKey) {
-    headers.Authorization = `Bearer ${config.apiKey}`;
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      messages: [{ role: 'user', content: info || '' }],
-    }),
+export const chat = async (config = {}) => {
+  const messages = Array.isArray(config.messages) ? config.messages : [];
+  if (!messages.length) throw new Error('请输入内容或添加图片');
+  return openaiChat({
+    apiKey: config.apiKey,
+    apiBase: config.apiBase,
+    model: config.model,
+    provider: config.provider,
+    messages,
+    onDelta: config.onDelta,
+    signal: config.signal,
   });
-
-  if (!response.ok) {
-    throw new Error(`AI 接口错误 (${response.status})`);
-  }
-  return response.json();
 };

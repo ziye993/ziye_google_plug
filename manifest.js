@@ -27,6 +27,7 @@ export default {
   },
   host_permissions: [
     'https://api.fanyi.baidu.com/*',
+    'https://api.openai.com/*',
     '<all_urls>',
   ],
   chrome_url_overrides: {

@@ -1,0 +1,104 @@
+.panel {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px 4px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  width: 100%;
+}
+
+.rowUser {
+  justify-content: flex-end;
+}
+
+.rowAi {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: min(100%, 640px);
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 32, 43, 0.1);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(10px);
+}
+
+.bubbleUser {
+  background: linear-gradient(145deg, rgba(15, 118, 110, 0.12), rgba(15, 118, 110, 0.06));
+  border-color: rgba(15, 118, 110, 0.22);
+}
+
+.bubbleAi {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.plain {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #15202b;
+}
+
+.imgRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.thumb {
+  max-width: 180px;
+  max-height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(21, 32, 43, 0.1);
+}
+
+.thinking {
+  color: #5a6b7b;
+  font-size: 13px;
+}
+
+.caret {
+  display: inline-block;
+  width: 7px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: #0f766e;
+  animation: blink 0.9s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes ziye-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -88,12 +88,17 @@ export default function Translate() {
     setLoading(true);
     try {
       const formData = form.getFieldsValue(true);
-      const { currentLanguage, targetLanguage, appid, appkey } = formData;
+      let { currentLanguage, targetLanguage, appid, appkey } = formData;
+      if(!appid||!appkey){
+        appid = '20231109001875285';
+        appkey = 'PQVEEvqcU1pdwNAylh3X';
+      }
       let translateContent = formData.translateContent || e.target.value;
       if (!translateContent?.trim()) {
         message.warning('请输入需要翻译的内容');
         return;
       }
+
       if (!appid || !appkey) {
         message.warning('请先配置百度翻译 appid / appkey');
         setComponentsData((prev) => {
@@ -218,15 +223,15 @@ export default function Translate() {
 
         <Space align="start" className={styles.ret_space}>
           <div className={styles.res_box}>
-            <p>目标语言</p>
+            <p className={styles.res_label}>目标语言</p>
             <CanCoptTranlResSpan list={componentsDate?.tranlRes?.tData} />
           </div>
           <div className={styles.res_box}>
-            <p>中</p>
+            <p className={styles.res_label}>中</p>
             <CanCoptTranlResSpan list={componentsDate?.tranlRes?.zhData} />
           </div>
           <div className={styles.res_box}>
-            <p>英</p>
+            <p className={styles.res_label}>英</p>
             <CanCoptTranlResSpan list={componentsDate?.tranlRes?.enData} />
           </div>
 
