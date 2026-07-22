@@ -1,23 +1,42 @@
-import React from 'react';
-import { CheckCircleTwoTone } from '@ant-design/icons'
-import styles from './index.module.css'
+import { useEffect, useState } from 'react';
+import styles from './index.module.css';
 import { Switch } from 'antd';
+import { getStorage, setStorage } from '../../lib/storege';
 
-console.log(styles)
+const VERSION = '1.0.0';
+
 export default function LayoutHeader() {
+  const [enabled, setEnabled] = useState(true);
+
+  useEffect(() => {
+    getStorage('extensionEnabled').then((v) => {
+      setEnabled(v !== false);
+    });
+  }, []);
+
+  const onToggle = (checked) => {
+    setEnabled(checked);
+    setStorage('extensionEnabled', checked);
+  };
 
   return (
-    <div className={styles.layout_header}>
-      <span className={styles.head_info} >
-        <span className={styles.name}>ziye_google_plug</span>
-        <CheckCircleTwoTone twoToneColor="#52c41a" style={{ fontSize: '14px', transform: 'translateY(-4px)' }} />
-      </span>
-      <div className={styles.vision_and_switch}>
-        <span className={styles.vision_and_switch_content}>
-          <Switch className={styles.switch_span} checkedChildren={"开"} unCheckedChildren={'关'} />
-          <span className={styles.vision}>| vision: 0.0.1</span>
+    <header className={styles.layout_header}>
+      <div className={styles.brand}>
+        <span className={styles.mark} aria-hidden>
+          Z
         </span>
+        <div className={styles.brandText}>
+          <h1 className={styles.name}>ZIYE</h1>
+          <p className={styles.tagline}>工具箱 · 翻译 / 过滤 / 主题 / 代理</p>
+        </div>
       </div>
-    </div>
+      <div className={styles.controls}>
+        <div className={styles.power}>
+          <span className={styles.powerLabel}>{enabled ? '已启用' : '已暂停'}</span>
+          <Switch checked={enabled} onChange={onToggle} size="small" />
+        </div>
+        <span className={styles.vision}>v{VERSION}</span>
+      </div>
+    </header>
   );
 }

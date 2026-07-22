@@ -1,107 +1,13 @@
-.tsl_container {
-  display: flex;
-  flex-direction: column;
-  max-block-size: 300px;
-  overflow: auto;
-}
-
-.tsl_container::-webkit-scrollbar {
-  display: none;
-}
-
-:blobal(.ant-space, .ant-form) {
-  line-height: 32px !important;
-  padding: 0;
-  margin: 0 !important;
-  block-size: 32px;
-}
-
-.appid_setting_icon {
-  inline-size: 300px;
-  overflow: hidden;
-  display: flex;
-  flex-wrap: nowrap;
-  align-content: center;
-
-}
-
-.appid_setting_icon span {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 32px;
-  block-size: 32px;
-}
-
-.setting_span {
-  margin-inline-end: 100px;
-  transition: all 0.3s;
-}
-
-.settingcontent {
-  transition: all 0.3s;
-}
-
-.appid_setting_icon:hover .settingcontent,
-.appid_setting_icon:hover .setting_span {
-
-  transform: translateX(-300px);
-}
-
-
-.res_box {
-  max-inline-size: 121px;
-  transition: all 0.3s;
-  inline-size: auto;
-  block-size: auto;
-  padding: 3px;
-  border-radius: 10px;
-  /* min-block-size: ; */
-}
-
-.res_box span {
-  white-space: nowrap;
-}
-
-.res_box :global(.ant-form-item) {
-  margin: 0;
-  padding: 0;
-}
-
-.tranl_res_span:hover {
-  background-color: #FFFFFF;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
-  transform: translateY(-2px);
-}
-
-.tranl_res_span {
-  cursor: pointer;
-  color: #1677ff;
-  transition: all 0.3s;
-  padding: 0 5px;
-  border-radius: 7px;
-  margin-top: 2px;
-}
-
-.ret_space {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.current_language {
-  display: inline-block;
-  position: absolute;
-  right: 3px;
-  bottom: 3px;
-  line-height: 16px;
-  height: 16px;
+.box {
+  width: 100%;
 }
 
 .themeName {
   display: inline-block;
   width: 100%;
-  padding-left: 10px;
+  padding-left: 8px;
+  font-weight: 500;
+  color: var(--ziye-ink);
 }
 
 .AddRuleModalForm {
@@ -109,7 +15,6 @@
   width: 100vw;
   max-height: 100vh;
   overflow: auto;
-
 }
 
 .AddRuleModalForm::-webkit-scrollbar {
@@ -117,8 +22,8 @@
 }
 
 .usedBox {
-  transition: all 0.5s;
-  background-color: rgba(22, 119, 255, 0.1);
+  transition: all 0.35s var(--ziye-ease);
+  background-color: var(--ziye-accent-soft);
 }
 
 .targetUrl {
@@ -126,8 +31,5 @@
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
-}
-
-.targetUrl :blobal(.ant-checkbox-wrapper) {
-  margin-left: 20px !important;
+  gap: 8px;
 }

@@ -1,61 +1,52 @@
-html {
-  width: 700px;
-  margin: 0;
-  padding: 0;
-  min-height: 400px;
-}
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap');
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  /* line-height: 1.5;
-  font-weight: 400; */
+  --ziye-ink: #15202b;
+  --ziye-muted: #5a6b7b;
+  --ziye-faint: #8a9aab;
+  --ziye-line: rgba(21, 32, 43, 0.1);
+  --ziye-bg-0: #e8eef4;
+  --ziye-bg-1: #f4f7fa;
+  --ziye-surface: rgba(255, 255, 255, 0.78);
+  --ziye-surface-solid: #ffffff;
+  --ziye-accent: #0f766e;
+  --ziye-accent-deep: #0a5c56;
+  --ziye-accent-soft: rgba(15, 118, 110, 0.12);
+  --ziye-danger: #b42318;
+  --ziye-radius: 12px;
+  --ziye-radius-sm: 8px;
+  --ziye-font-display: 'Sora', 'Segoe UI', sans-serif;
+  --ziye-font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --ziye-shadow: 0 1px 0 rgba(21, 32, 43, 0.04);
+  --ziye-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-
-
+  font-family: var(--ziye-font-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* 主题 */
-  --body-background: #fff;
-  --body-secondary-background: #f5f5f5;
-  --body-third-stage-background: #e0e0e0;
+  color: var(--ziye-ink);
+  color-scheme: light;
 
-
-  --dark-contrast-color: #000;
-  --dark-secondary-contrast-color: #333;
-  --dark-third-stage-contrast-color: #666;
+  --body-background: var(--ziye-bg-1);
+  --body-secondary-background: var(--ziye-surface-solid);
+  --body-third-stage-background: var(--ziye-bg-0);
+  --font-color: var(--ziye-ink);
+  --secondary-font-color: var(--ziye-muted);
+  --third-stage-font-color: var(--ziye-faint);
 }
 
-/* 黑色主题 */
-[data-theme='dark'] {
-  --body-background: #000;
-  --body-secondary-background: #333;
-  --body-third-stage-background: #666;
-
-  --font-color: #fff;
-  --secondary-font-color: #ccc;
-  --third-stage-font-color: #999;
+html.ziye-popup {
+  width: 700px;
+  margin: 0;
+  padding: 0;
+  min-height: 420px;
 }
 
-/* 亮色主题 */
-[data-theme='light'] {
-  --body-background: #fff;
-  --body-secondary-background: #f5f5f5;
-  --body-third-stage-background: #e0e0e0;
-
-  --font-color: #000;
-  --secondary-font-color: #333;
-  --third-stage-font-color: #666;
-}
-
-body {
-  /* background-color: #fff; */
-  /* background-color: var(--body-background); */
-  font-size: 18px;
-  min-height: 400px;
+html.ziye-newtab,
+html.ziye-newtab body {
+  width: 100%;
+  min-height: 100vh;
 }
 
 * {
@@ -64,9 +55,69 @@ body {
   box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: light) {
-  button { color: #333; }
+body {
+  font-size: 14px;
+  min-height: 420px;
+  color: var(--ziye-ink);
+  font-family: var(--ziye-font-body);
+  background:
+    radial-gradient(900px 420px at 8% -10%, rgba(15, 118, 110, 0.14), transparent 55%),
+    radial-gradient(700px 360px at 100% 0%, rgba(56, 102, 150, 0.1), transparent 50%),
+    linear-gradient(165deg, var(--ziye-bg-0) 0%, var(--ziye-bg-1) 48%, #eef3f7 100%);
+  background-attachment: fixed;
 }
-@media (prefers-color-scheme: dark) {
-  button { color: #ddd; }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(21, 32, 43, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 32, 43, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 88%);
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(21, 32, 43, 0.18);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes ziye-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ziye-mark-in {
+  from {
+    opacity: 0;
+    transform: scale(0.86) rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
 }

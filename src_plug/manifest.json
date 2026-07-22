@@ -2,9 +2,11 @@
   "manifest_version": 3,
   "name": "ziye_google_plug",
   "version": "1.0.0",
-  "description": "插件说明",
+  "description": "ZIYE 工具箱：翻译、搜索精简、二维码、主题、中间脚本、代理、新标签页",
   "icons": {
-    "18": "assets/on.png"
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
   },
   "author": "ziye",
   "background": {
@@ -16,13 +18,14 @@
         "<all_urls>"
       ],
       "js": [
-         "js/content-script.js"
+        "js/content-script.js"
       ],
       "run_at": "document_start"
     }
   ],
   "action": {
     "default_icon": "assets/icon.png",
+    "default_title": "ZIYE 工具箱",
     "default_popup": "page/expand/index.html"
   },
   "host_permissions": [
@@ -42,16 +45,21 @@
     "webNavigation",
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
-    "webRequest"
+    "webRequest",
+    "scripting"
   ],
   "web_accessible_resources": [
     {
       "resources": [
-        "assets/background.png"
+        "assets/background.png",
+        "assets/background-null.png"
       ],
       "matches": [
         "<all_urls>"
       ]
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:;"
+  }
 }

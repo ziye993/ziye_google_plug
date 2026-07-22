@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Checkbox, Form, Input, Modal, Select, Switch } from 'antd';
+import { Button, Checkbox, Form, Input, Modal, Select, Switch, Upload, message } from 'antd';
 import styles from './index.module.css';
-import { PlusOutlined, FormOutlined, CloseOutlined, SettingOutlined } from '@ant-design/icons';
+import { PlusOutlined, FormOutlined, CloseOutlined, SettingOutlined, ExportOutlined, ImportOutlined } from '@ant-design/icons';
 import { getStorage, setStorage } from '../../lib/storege';
 import { actionType, methods, resourceTypes } from './enum';
 import { useForm } from 'antd/es/form/Form';
@@ -114,10 +114,21 @@ const AgentBar = function () {
     initDate();
   }, [])
 
+  const syncDnr = () => {
+    try {
+      // eslint-disable-next-line no-undef
+      chrome?.runtime?.sendMessage?.({ action: 'SYNC_DNR_RULES' }, () => {});
+    } catch {
+      // ignore
+    }
+  };
+
   const saveItem = (data) => {
-    console.log(data)
-    setStorage('agentPageDate', { ruleData: data || FormData })
-  }
+    const payload = { ruleData: data || FormData };
+    setStorage('agentPageDate', payload);
+    setStorage('agentPageData', payload);
+    syncDnr();
+  };
 
   const removerItem = (index) => {
     setFormData(prev => {
@@ -150,6 +161,43 @@ const AgentBar = function () {
           <Checkbox>全选</Checkbox>
         </FormItem>
         <div className={styles.enbBox} >
+          <Button
+            size="small"
+            icon={<ExportOutlined />}
+            onClick={() => {
+              const blob = new Blob([JSON.stringify({ ruleData: FormData }, null, 2)], { type: 'application/json' });
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = 'ziye-dnr-rules.json';
+              a.click();
+              URL.revokeObjectURL(a.href);
+            }}
+          >
+            导出
+          </Button>
+          <Upload
+            accept=".json,application/json"
+            showUploadList={false}
+            beforeUpload={(file) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                try {
+                  const parsed = JSON.parse(String(reader.result));
+                  const ruleData = parsed.ruleData || parsed;
+                  setFormData(ruleData);
+                  form.setFieldsValue(ruleData);
+                  saveItem(ruleData);
+                  message.success('规则已导入');
+                } catch {
+                  message.error('JSON 无效');
+                }
+              };
+              reader.readAsText(file);
+              return false;
+            }}
+          >
+            <Button size="small" icon={<ImportOutlined />}>导入</Button>
+          </Upload>
           <div className={styles.proxyHostAddress}>
             <SettingOutlined />
             <FormItem name={"proxyHostAddress"} className={styles.proxyHostAddressFormItem}>
@@ -162,7 +210,7 @@ const AgentBar = function () {
               }} enterButton={<span onClick={() => { saveItem() }} >保存</span>} />
             </FormItem>
           </div>
-          <FormItem name="enb">
+          <FormItem name="enb" valuePropName="checked">
             <Switch />
           </FormItem>
         </div>

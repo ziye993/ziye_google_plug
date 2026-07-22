@@ -87,3 +87,28 @@ export function deleteIndexDb(id) {
     });
   });
 }
+
+/** 主题图：chrome.storage + IndexedDB 双写，CS 可直接读 storage */
+export async function setThemeImage(id, dataUrl) {
+  if (!id || !dataUrl) return;
+  await setStorage(id, dataUrl);
+  try {
+    await setIndexDb(id, dataUrl);
+  } catch {
+    // IDB 失败时仍保留 storage
+  }
+}
+
+export async function deleteThemeImage(id) {
+  if (!id || typeof id !== 'string' || !id.startsWith('img_')) return;
+  if (chrome?.storage?.local) {
+    await new Promise((resolve) => {
+      chrome.storage.local.remove(id, () => resolve());
+    });
+  }
+  try {
+    await deleteIndexDb(id);
+  } catch {
+    // ignore
+  }
+}

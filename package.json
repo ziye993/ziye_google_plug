@@ -1,11 +1,15 @@
 {
   "name": "ziye_google_plug",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:popup": "vite --open /popup.html",
     "build": "vite build",
+    "build:ext": "vite build && node scripts/copy-extension.mjs",
+    "pack": "npm run build:ext && node scripts/pack.mjs",
+    "proxy": "node src_node/main.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -1,71 +1,96 @@
 .seachBox {
   position: relative;
-  padding: 10px;
+  padding: 2px;
   overflow: auto;
   height: 100%;
-  max-height: 350px;
+  max-height: 340px;
   box-sizing: border-box;
   flex: 1;
 }
 
 .seachBox::-webkit-scrollbar {
-  display: none;
+  width: 5px;
 }
 
-.seachBox>.toolBox,
-.seachBox>.toolBoxAdd {
-  padding: 10px;
-  border: 1px solid #ccc;
+.seachBox > .toolBox,
+.seachBox > .toolBoxAdd {
+  padding: 12px 12px 10px;
+  border: 1px solid var(--ziye-line);
   text-align: left;
   line-height: 24px;
-  font-size: 16px;
-  border-radius: 4px;
-  margin: 10px 0;
+  font-size: 13px;
+  border-radius: var(--ziye-radius-sm);
+  margin: 8px 0;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  /* cursor: pointer; */
+  background: rgba(255, 255, 255, 0.85);
+  transition: border-color 0.2s var(--ziye-ease), background 0.2s var(--ziye-ease);
+}
+
+.seachBox > .toolBox:hover {
+  border-color: rgba(15, 118, 110, 0.35);
+  background: #fff;
 }
 
 .closeIcon,
 .copyIcon,
 .editIcon {
   position: absolute;
-  right: 20px;
+  right: 14px;
   top: 14px;
+  color: var(--ziye-muted);
+  cursor: pointer;
+  transition: color 0.2s;
 }
-.toolBox>span{
+
+.closeIcon:hover,
+.copyIcon:hover,
+.editIcon:hover {
+  color: var(--ziye-accent-deep);
+}
+
+.toolBox > span {
   max-width: 80%;
 }
+
 .toolBox .copyIcon {
-  right: 100px;
-  display: none;
+  right: 88px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
 }
+
 .toolBox .editIcon {
-  right: 60px;
+  right: 52px;
 }
 
 .toolBox:hover .copyIcon {
-  display: unset;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .closeIcon::after,
 .copyIcon::after,
 .editIcon::after {
   content: '';
-  width: 25px;
-  height: 25px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--ziye-line);
+  border-radius: 6px;
   position: absolute;
   top: -4px;
   left: -4px;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: -1;
 }
-.checkbox_tool{
-margin-right: 10px !important;
+
+.checkbox_tool {
+  margin-right: 10px !important;
 }
+
 .toolBoxName {
   cursor: pointer;
   width: 90%;
@@ -74,14 +99,16 @@ margin-right: 10px !important;
   overflow: hidden;
   white-space: nowrap;
   position: relative;
+  color: var(--ziye-ink);
+  font-weight: 500;
 }
 
 .urlSet {
   width: 100%;
-  height: 0px;
+  height: 0;
   overflow: auto;
-  transition: all 0.5s;
-  max-height: 100px;
+  transition: height 0.35s var(--ziye-ease), padding 0.35s var(--ziye-ease);
+  max-height: 110px;
   box-sizing: border-box;
 }
 
@@ -91,44 +118,55 @@ margin-right: 10px !important;
 
 .actionUrlSet {
   height: 100px;
-  padding: 10px 0;
+  padding: 8px 0 0;
 }
 
 .hiddenUrlSet {
-  height: 0px;
+  height: 0;
 }
 
 .cngKeyItem {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 5px 5px;
-  margin: 10px;
+  border: 1px solid var(--ziye-line);
+  border-radius: 6px;
+  padding: 3px 8px;
+  margin: 4px 6px 4px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ziye-accent-soft);
+  color: var(--ziye-accent-deep);
+  font-size: 12px;
 }
 
-.seachBox>.toolBoxAdd {
+.seachBox > .toolBoxAdd {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
   flex-wrap: nowrap;
+  border-style: dashed;
+  background: transparent;
 }
 
-.seachBox>.toolBoxAdd>.input {
+.seachBox > .toolBoxAdd > .input {
   margin-right: 10px;
 }
 
 .seachBox .input {
   width: auto;
-  height: 33px;
+  height: 32px;
   box-sizing: border-box;
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  margin: 5px 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--ziye-line);
+  margin: 4px 0;
+  font-family: var(--ziye-font-body);
+  background: #fff;
 }
 
 .seachBox .input:focus {
   outline: none;
+  border-color: var(--ziye-accent);
 }
 
 .seachBox .seachTitleEdit {
@@ -136,25 +174,29 @@ margin-right: 10px !important;
 }
 
 .classSpanName {
-  background-color: #ccc;
-  border: 1px solid #aaa;
-  padding: 0px 5px;
-  margin: 0 5px;
-  border-radius: 5px;
-  /* display: inline-block; */
+  background: rgba(21, 32, 43, 0.06);
+  border: 1px solid var(--ziye-line);
+  padding: 0 6px;
+  margin: 0 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--ziye-muted);
+  font-family: ui-monospace, 'Cascadia Code', monospace;
 }
 
-
 .seachTitleEdit .hideClassBoxInput {
-  width: 0px;
-  height: 0px;
+  width: 0;
+  height: 0;
   overflow: hidden;
   display: none;
 }
 
-.seachStatus{
+.seachStatus {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-
+  align-items: center;
+  padding: 2px 2px 8px;
+  font-size: 13px;
+  color: var(--ziye-muted);
 }

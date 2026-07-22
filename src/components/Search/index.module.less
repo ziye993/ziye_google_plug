@@ -1,252 +1,257 @@
 .Box {
   width: 100vw;
-  height: 80vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: 0;
-  padding: 0;
+  padding: 48px 20px 64px;
   box-sizing: border-box;
   overflow: hidden;
+  position: relative;
+  font-family: var(--ziye-font-body, 'IBM Plex Sans', sans-serif);
+  color: var(--ziye-ink, #15202b);
+  background:
+    radial-gradient(1000px 520px at 12% -8%, rgba(15, 118, 110, 0.16), transparent 55%),
+    radial-gradient(800px 420px at 92% 8%, rgba(56, 102, 150, 0.12), transparent 52%),
+    linear-gradient(168deg, #e8eef4 0%, #f4f7fa 45%, #eef3f7 100%);
 
-  * {
-    box-sizing: border-box;
-    transition: all 0.3s;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image:
+      linear-gradient(rgba(21, 32, 43, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(21, 32, 43, 0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 72%);
   }
+}
 
-  .searchBox {
-    width: 100%;
-    height: 100px;
+.hero {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 28px;
+  animation: ziye-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mark {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-family: var(--ziye-font-display, 'Sora', sans-serif);
+  font-weight: 700;
+  font-size: 22px;
+  color: #fff;
+  background: linear-gradient(145deg, #0f766e, #0a5c56);
+  letter-spacing: -0.04em;
+  animation: ziye-mark-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.brand {
+  font-family: var(--ziye-font-display, 'Sora', sans-serif);
+  font-size: clamp(36px, 6vw, 52px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  margin: 0;
+  color: #15202b;
+}
+
+.sub {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: #5a6b7b;
+  letter-spacing: 0.02em;
+}
+
+.searchBox {
+  position: relative;
+  z-index: 2;
+  width: min(720px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  animation: ziye-fade-up 0.55s 0.08s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  .buttonGrunp {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    min-width: 500px;
-    padding: 0 22px;
-    bottom: 0px;
+    gap: 10px;
+  }
 
-    .buttonGrunp {
-      width: auto;
-      height: auto;
-      margin-left: 12px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: center;
-      justify-content: center;
+  .inputBox {
+    width: 100%;
+    position: relative;
+  }
 
-      // box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  input {
+    width: 100%;
+    height: 52px;
+    border: 1px solid rgba(21, 32, 43, 0.12);
+    outline: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(12px);
+    padding: 0 18px;
+    color: #15202b;
+    transition:
+      border-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 
-
+    &::placeholder {
+      color: #8a9aab;
     }
 
-    .inputBox {
-      width: 100%;
-      max-width: 550px;
-      position: relative;
-      padding: 10px;
+    &:focus {
+      border-color: rgba(15, 118, 110, 0.45);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+    }
+  }
+
+  button {
+    appearance: none;
+    height: 44px;
+    border: 1px solid rgba(21, 32, 43, 0.1);
+    padding: 0 18px;
+    cursor: pointer;
+    border-radius: 12px;
+    font-family: var(--ziye-font-display, 'Sora', sans-serif);
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.75);
+    color: #15202b;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition:
+      transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+      background 0.2s,
+      border-color 0.2s;
+
+    &:hover {
+      transform: translateY(-1px);
+      border-color: rgba(15, 118, 110, 0.35);
+      background: #fff;
     }
 
-    input {
-      width: 100%;
-      height: 42px;
-      border: none;
-      outline: none;
-
-      border-bottom: 1.5px solid #adadad9d;
-      font-size: 16px;
-      background-color: transparent;
-      max-width: 550px;
-      z-index: 20;
-      position: relative;
-
-      &:hover {
-        filter: brightness(1.2);
-      }
+    &:first-child {
+      background: linear-gradient(145deg, #0f766e, #0a5c56);
+      border-color: transparent;
+      color: #fff;
     }
 
-    button {
-      width: auto;
-      white-space: nowrap;
-      height: 42px;
-      border: none;
-      padding: 5px 20px;
-      cursor: pointer;
-      border-radius: 5px;
-      margin-left: 12px;
-      transition: transform 0.3s;
-      background-color: transparent;
-      border: 1.5px solid #aaaaaa70;
-      box-shadow: color-mix(in srgb, rgba(0, 0, 0, 0.2) 30%, transparent) 0 1px 2px 0, color-mix(in srgb, rgba(0, 0, 0, 0.2) 15%, transparent) 0 2px 6px 2px;
-
-      &:hover {
-        filter: brightness(1.2);
-      }
+    &:first-child:hover {
+      filter: brightness(1.05);
     }
 
-
-
-    .bingSearchSpan {
-      font-size: 14;
-      color: #3686ffb0;
-      font-weight: 800;
-
-      &::before {
-        content: '/';
-        font-size: 16px;
-        margin: 0 3px;
-        font-weight: 1000;
-        color: initial;
-      }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
+  }
 
-    .rainbow-text {
-      position: relative;
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 800;
-      color: transparent;
-      margin-left: 10px;
-      /* 底层炫彩背景 */
-      background: linear-gradient(to right, #ff004c3d,
-          #ff9d003d,
-          #ffee0060,
-          #33ff0060,
-          #00ffee60,
-          #0066ff60,
-          #aa00ff60,
-          #ff004c60,
-          #ff9f0060,
-          #ffee0060,
-          #33ff0060,
-          #00ffee60,
-          #0066ff60,
-          #aa00ff3d, );
-      background-size: 200% 200%;
+  .bingSearchSpan {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 600;
 
-      /* 关键：裁剪出文字 */
-      -webkit-background-clip: text;
-      background-clip: text;
-
-      animation: spin 10s linear infinite;
+    &::before {
+      content: '/';
+      margin: 0 4px;
+      color: rgba(255, 255, 255, 0.45);
+      font-weight: 400;
     }
+  }
 
-    /* 旋转动画（围绕中心） */
-    @keyframes spin {
-      from {
-        background-position: 50% 50%;
-        filter: hue-rotate(0deg);
-      }
-
-      to {
-        background-position: 50% 50%;
-        filter: hue-rotate(360deg);
-      }
-    }
+  .rainbow-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: 0.04em;
   }
 }
 
 .aiChatInputBox {
-  position: absolute;
-  bottom: 30px;
-  width: 100%;
-  height: 50px;
+  position: relative;
+  width: min(720px, 100%);
 }
 
-.bookList {
-  text-align: center;
-  box-shadow: 0 1px 3px rgba(23, 23, 23, 0.24);
-  background-color: #3031340e;
-  border: 1px solid #5f636857;
-  border-radius: 6px;
-  margin: 10px;
-  padding: 5px 20px;
-  font-family: Arial, sans-serif;
-  color: initial;
-}
-
-html {
-  width: 100vw;
-  height: 100vh;
-}
-
-@keyframes vibrationbox {
-  0% {
-    transform: translateX(0);
-  }
-
-  20% {
-    transform: translateX(-2px);
-  }
-
-  40% {
-    transform: translateX(2px);
-  }
-
-  60% {
-    transform: translateX(-1px);
-  }
-
-  80% {
-    transform: translateX(1px);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
+.aiReply {
+  margin-top: 8px;
+  width: min(720px, 100%);
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 32, 43, 0.1);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(10px);
+  white-space: pre-wrap;
+  line-height: 1.65;
+  font-size: 14px;
+  color: #15202b;
+  animation: ziye-fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes showhistory {
-  0% {
+  from {
     opacity: 0;
+    transform: translateY(4px);
   }
-
-  100% {
+  to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-
-
 .inputHistory {
   width: 100%;
-  height: auto;
-  max-height: 300px;
-  border-radius: 10px;
-  border: 1px solid #4646463d;
-  min-height: 100px;
+  max-height: 280px;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 32, 43, 0.1);
+  min-height: 80px;
   position: absolute;
-  top: 0px;
+  top: calc(100% + 8px);
   left: 0;
-  z-index: 10;
-  padding: 0 5px;
-
-  font-size: 14px;
-  animation: showhistory 0.3s;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.151);
-  padding-bottom: 20px;
-  color: initial;
+  z-index: 20;
+  padding: 8px;
+  font-size: 13px;
+  animation: showhistory 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.9);
+  color: #15202b;
+  box-shadow: 0 12px 32px rgba(21, 32, 43, 0.08);
 
   .noHistory {
-    padding-left: 10px;
+    padding: 16px 12px;
+    color: #8a9aab;
   }
 
   .schistory {
     position: relative;
     width: 100%;
-    max-height: 200px;
-    margin-top: 50px;
+    max-height: 240px;
     overflow-y: auto;
   }
 
   .historySetting {
-    width: 100%;
-    line-height: 30px;
-    padding: 5px 5px;
+    display: none;
   }
 
   .histItem {
@@ -254,56 +259,91 @@ html {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 3px 5px;
+    padding: 8px 10px;
+    gap: 8px;
+    border-radius: 10px;
 
     span {
-      width: 40px;
+      width: 36px;
+      flex-shrink: 0;
+      text-align: center;
+      color: #8a9aab;
+      font-size: 12px;
+      font-family: var(--ziye-font-display, 'Sora', sans-serif);
+      font-weight: 600;
     }
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.1);
-      border-radius: 6px;
+      background: rgba(15, 118, 110, 0.08);
     }
 
     .historyDelete {
-      width: 30px;
-      height: 30px;
-      z-index: 30;
-      background-color: rgba(136, 136, 136, 0.1);
-      border-radius: 50%;
-      display: block;
-      position: relative;
-      line-height: 30px;
-      text-align: center;
+      width: 28px;
+      height: 28px;
+      color: #5a6b7b;
       display: flex;
-      flex-direction: row;
       align-items: center;
       justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+
+      &:hover {
+        background: rgba(21, 32, 43, 0.06);
+        color: #0a5c56;
+      }
     }
 
     .historyTime {
-      width: 30%;
+      width: 28%;
+      color: #8a9aab;
+      font-size: 12px;
+      text-align: right;
     }
 
     .historyContent {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      max-width: 40%;
-      width: 40%;
-      box-sizing: border-box;
+      max-width: none;
+      width: auto;
+      flex: 1;
+      text-align: left;
+      cursor: pointer;
+      color: #15202b;
+      font-weight: 500;
     }
   }
 }
 
-.inputBox>.aiInputHistory {
-  bottom: 0;
+.inputBox > .aiInputHistory {
+  bottom: calc(100% + 8px);
   top: unset;
-  
-  .schistory{
+
+  .schistory {
     flex-direction: column-reverse;
-    padding-top: 0px;
+    padding-top: 0;
     margin-top: 0;
-    margin-bottom: 50px;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .Box {
+    padding: 32px 14px 48px;
+    justify-content: flex-start;
+    padding-top: 18vh;
+  }
+
+  .searchBox {
+    .buttonGrunp {
+      flex-direction: column;
+      align-items: stretch;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   }
 }

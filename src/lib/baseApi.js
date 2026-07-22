@@ -3,17 +3,24 @@ function jsonp(param) {
   const params = new URLSearchParams(param);
   const url = `https://api.fanyi.baidu.com/api/trans/vip/translate?${params.toString()}`;
   return new Promise((resolve, rej) => {
-    chrome?.runtime?.sendMessage?.({
-      action: "translate",
-      query: url
-    }, (response) => {
-      if (response?.success) {
-        resolve(response?.data)
-      } else {
-        rej(response)
-      }
-    });
-  })
+    chrome?.runtime?.sendMessage?.(
+      {
+        action: 'translate',
+        query: url,
+      },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          rej(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        if (response?.success) {
+          resolve(response?.data);
+        } else {
+          rej(new Error(response?.error || '翻译请求失败'));
+        }
+      },
+    );
+  });
 }
 
 const fetchWithTimeout = (url, options = {}, timeout = 500) => {
@@ -26,7 +33,4 @@ const fetchWithTimeout = (url, options = {}, timeout = 500) => {
   }).finally(() => clearTimeout(timer));
 };
 
-export {
-  jsonp,
-  fetchWithTimeout
-}
+export { jsonp, fetchWithTimeout };
