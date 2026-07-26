@@ -130,16 +130,19 @@ export default function Search() {
   };
 
   const onKeyDown = async (e) => {
-    if (e.key === 'Enter') {
-      if (e.ctrlKey) {
-        e.preventDefault();
-        await onChat();
-      } else if (!pendingImages.length) {
-        onSearch(inputValue);
-      } else {
-        e.preventDefault();
-        await onChat();
-      }
+    if (e.key !== 'Enter') return;
+
+    if (isAi) {
+      e.preventDefault();
+      await onChat();
+      return;
+    }
+
+    if (e.ctrlKey || pendingImages.length) {
+      e.preventDefault();
+      await onChat();
+    } else {
+      onSearch(inputValue);
     }
   };
 
@@ -463,7 +466,7 @@ export default function Search() {
               className={showAi ? styles.inputWithAttach : undefined}
               placeholder={
                 isAi
-                  ? '发送消息 · Ctrl+回车 · 可拖拽/粘贴图片'
+                  ? '回车发送 · Esc 返回搜索 · 可拖拽/粘贴图片'
                   : showAi
                     ? '回车搜索 · Ctrl+回车进入对话'
                     : '回车搜索 · 设置中填写 API Key 启用对话'
