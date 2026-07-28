@@ -89,22 +89,27 @@ export default function Search() {
   const enterAiMode = () => setSearchState('aiChat');
   const enterSearchMode = () => setSearchState('search');
 
-  // Esc：从对话态回到搜索主界面
+  // Esc：在搜索 / AI 对话两种状态间切换
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
-      if (searchState !== 'aiChat') return;
       // 设置弹窗打开时交给 Modal 自己处理 Esc
       if (document.querySelector('.ant-modal-wrap')) return;
+      if (!showAi) return;
       e.preventDefault();
-      enterSearchMode();
+      if (isAi) {
+        enterSearchMode();
+        setPendingImages([]);
+        setStreamText('');
+      } else {
+        enterAiMode();
+      }
       setHistory((prev) => ({ ...prev, show: false }));
-      setPendingImages([]);
-      setStreamText('');
+      inputRef.current?.focus();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [searchState]);
+  }, [isAi, showAi]);
 
   const addImages = async (fileList) => {
     try {
@@ -466,9 +471,9 @@ export default function Search() {
               className={showAi ? styles.inputWithAttach : undefined}
               placeholder={
                 isAi
-                  ? '回车发送 · Esc 返回搜索 · 可拖拽/粘贴图片'
+                  ? '回车发送 · Esc 切回搜索 · 可拖拽/粘贴图片'
                   : showAi
-                    ? '回车搜索 · Ctrl+回车进入对话'
+                    ? '回车搜索 · Esc 切换对话 · Ctrl+回车进入对话'
                     : '回车搜索 · 设置中填写 API Key 启用对话'
               }
               onInput={onInput}
